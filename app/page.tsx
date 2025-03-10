@@ -11,6 +11,7 @@ import { AppPromotion } from "./components/app-promotion";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 import { FeaturedCategories } from "./components/featured-categories";
+import { SearchBar } from "./components/search-bar";
 
 export default function Home() {
   return (
@@ -18,7 +19,7 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-[600px]">
+      <section className="relative h-[600px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/Hero2-QKTSHICM.webp"
@@ -28,17 +29,19 @@ export default function Home() {
             priority
           />
         </div>
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-start py-12 items-center text-center text-white">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">
-            Find, buy, and own your dream car in
-            <br />
-            Easy steps.
-          </h1>
-          <p className="text-lg mb-8 max-w-2xl">
-            Purchase the perfect car for your lifestyle. Choose from a wide
-            range of vehicles for any budget.
-          </p>
-
+        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-between py-[90px]  md:py-[120px] items-center  text-center text-white">
+          <div>
+            <h1 className="text-2xl md:text-5xl font-bold mb-4">
+              Find, buy, and own your dream car in
+              <br />
+              Easy steps.
+            </h1>
+            <p className="text-md md:text-lg mb-8 max-w-2xl">
+              Purchase the perfect car for your lifestyle. Choose from a wide
+              range of vehicles for any budget.
+            </p>
+          </div>
+          <SearchBar />
           {/* <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden mt-8">
             <Search />
           </div> */}
