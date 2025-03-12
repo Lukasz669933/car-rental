@@ -61,7 +61,7 @@ export function FeaturedCategories() {
     <section className="py-16 bg-black" ref={containerRef}>
       {/* Scrolling Typography */}
       <div className="overflow-hidden mb-16" ref={textRef}>
-        <div className="scroll-text whitespace-nowrap text-[50px] sm:text-[70px] md:text-[150px] font-bold text-white opacity-20">
+        <div className="scroll-text whitespace-nowrap text-[30px] sm:text-[50px] md:text-[80px] font-bold text-white opacity-20">
           FIND YOUR DREAM CAR &nbsp; • &nbsp; SELL YOUR CAR &nbsp; • &nbsp; FIND
           YOUR DREAM CAR &nbsp; • &nbsp; SELL YOUR CAR &nbsp; • &nbsp;
         </div>

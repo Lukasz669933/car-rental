@@ -9,53 +9,81 @@ import { useRef } from "react";
 const CAR_TYPES = [
   {
     id: 1,
-    name: "SEDANS",
+    name: "HATCHBACK",
+    image:
+      "https://images.unsplash.com/photo-1471444928139-48c5bf5173f8?q=80&w=2942&auto=format&fit=crop",
+  },
+  {
+    id: 2,
+    name: "SEDAN",
     image:
       "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2564&auto=format&fit=crop",
   },
   {
-    id: 2,
-    name: "SUVS",
+    id: 3,
+    name: "KOMBI",
+    image:
+      "https://images.unsplash.com/photo-1567514314761-dcc1c0d64b26?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: 4,
+    name: "COUPE",
+    image:
+      "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?q=80&w=2071&auto=format&fit=crop",
+  },
+  {
+    id: 5,
+    name: "SPORTS",
+    image:
+      "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: 6,
+    name: "LIMOUSINE",
+    image:
+      "https://images.unsplash.com/photo-1632245889029-e406faaa34cd?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: 7,
+    name: "SUV",
     image:
       "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop",
   },
   {
-    id: 3,
-    name: "TRUCKS",
-    image:
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2564&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    name: "VANS",
-    image:
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=2564&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    name: "ELECTRIC VEHICLES",
-    subtitle: "(EV)",
-    image:
-      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071&auto=format&fit=crop",
-  },
-  {
-    id: 6,
-    name: "HYBRIDS",
-    image:
-      "https://images.unsplash.com/photo-1471444928139-48c5bf5173f8?q=80&w=2942&auto=format&fit=crop",
-  },
-  {
-    id: 7,
-    name: "PLUG-IN HYBRIDS",
-    subtitle: "(PHEV)",
-    image:
-      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071&auto=format&fit=crop",
-  },
-  {
     id: 8,
-    name: "HATCHBACKS",
+    name: "CONVERTIBLE",
     image:
-      "https://images.unsplash.com/photo-1471444928139-48c5bf5173f8?q=80&w=2942&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?q=80&w=2072&auto=format&fit=crop",
+  },
+  {
+    id: 9,
+    name: "PICKUP",
+    image:
+      "https://images.unsplash.com/photo-1558383817-6a5d00b668b9?q=80&w=2071&auto=format&fit=crop",
+  },
+  {
+    id: 10,
+    name: "OFF-ROAD",
+    image:
+      "https://images.unsplash.com/photo-1536698986031-36d0cd2f07e8?q=80&w=2071&auto=format&fit=crop",
+  },
+  {
+    id: 11,
+    name: "BUS",
+    image:
+      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop",
+  },
+  {
+    id: 12,
+    name: "CLASSIC",
+    image:
+      "https://images.unsplash.com/photo-1566008885218-90abf9200ddb?q=80&w=2069&auto=format&fit=crop",
+  },
+  {
+    id: 13,
+    name: "CAMPERS",
+    image:
+      "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2070&auto=format&fit=crop",
   },
 ];
 
@@ -118,11 +146,6 @@ export function BrowseLocations() {
                   <div className="text-center py-4 px-2">
                     <h3 className="font-medium text-sm tracking-wide">
                       {type.name}
-                      {type.subtitle && (
-                        <span className="block text-sm text-gray-600 mt-0.5">
-                          {type.subtitle}
-                        </span>
-                      )}
                     </h3>
                   </div>
                 </div>

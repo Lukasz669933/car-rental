@@ -118,7 +118,7 @@ export function BrowseCategories() {
             <Link
               key={brand.id}
               href={`/brand/${brand.name.toLowerCase()}`}
-              className="relative bg-white rounded-lg shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition-shadow"
+              className="relative bg-white border border-gray-400 rounded-lg shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition-shadow"
             >
               {brand.discount && (
                 <div className="absolute top-0 left-0 bg-teal-100 text-teal-800 py-1 px-3 rounded-tl-lg rounded-br-lg text-xs font-medium">

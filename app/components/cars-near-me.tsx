@@ -17,6 +17,7 @@ const CARS = [
     fuel: "Hybrid",
     year: 2023,
     mileage: 12500,
+    engineSize: "2.5L",
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const CARS = [
     fuel: "Petrol",
     year: 2022,
     mileage: 8700,
+    engineSize: "5.0L",
   },
   {
     id: 3,
@@ -45,6 +47,7 @@ const CARS = [
     fuel: "Petrol",
     year: 2023,
     mileage: 3200,
+    engineSize: "5.2L",
   },
   {
     id: 4,
@@ -86,9 +89,6 @@ export function CarsNearMe() {
                   fill
                   className="object-cover"
                 />
-                <Badge className="absolute top-3 left-3 bg-blue-600">
-                  Popular
-                </Badge>
               </div>
 
               <div className="p-4 ">
@@ -101,15 +101,15 @@ export function CarsNearMe() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 mb-4">
+                {/* <div className="flex items-center gap-1 mb-4">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-medium">{car.rating}</span>
                   <span className="text-sm text-gray-500">
                     ({car.reviews} reviews)
                   </span>
-                </div>
+                </div> */}
 
-                <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="grid grid-cols-2 gap-2 my-4">
                   <div className="flex items-center gap-1 text-sm text-gray-600">
                     <span className="font-medium">Year:</span>
                     <span>{car.year}</span>
@@ -117,6 +117,12 @@ export function CarsNearMe() {
                   <div className="flex items-center gap-1 text-sm text-gray-600">
                     <span className="font-medium">Mileage:</span>
                     <span>{car.mileage.toLocaleString()} mi</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2 my-4">
+                  <div className="flex items-center gap-1 text-sm text-gray-600">
+                    <span className="font-medium">Engine:</span>
+                    <span>{car.engineSize}</span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-600">
                     <Gauge className="h-4 w-4" />
@@ -129,8 +135,8 @@ export function CarsNearMe() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3].map((i) => (
+                  <div className="flex space-x-1 items-center">
+                    {[1].map((i) => (
                       <div
                         key={i}
                         className="w-6 h-6 rounded-full border-2 border-white overflow-hidden"
@@ -143,6 +149,7 @@ export function CarsNearMe() {
                         />
                       </div>
                     ))}
+                    <p className="text-sm font-medium">Charles</p>
                   </div>
                   <Button variant="outline" size="sm">
                     Buy Now
