@@ -91,47 +91,73 @@ export function BrowseByMake() {
     // Calculate the scroll distance needed for the full horizontal scroll
     const calculateScrollDistance = () => {
       if (!container) return 0;
-      // Total width of all items minus the viewport width
       return container.scrollWidth - window.innerWidth;
     };
 
     // Set up the scroll height to accommodate the horizontal scroll
     const setScrollHeight = () => {
       if (!section) return;
-      // The extra height needed to scroll through all content horizontally
-      const extraHeight = calculateScrollDistance() * 1.5; // Multiply by a factor to control scroll speed
-      // Set a minimum height for the section to ensure pinning works
-      section.style.height = `${window.innerHeight + extraHeight}px`;
+      // Add an extra viewport height to ensure we can trigger the first make
+      section.style.height = `${window.innerHeight * (MAKES.length + 0.5)}px`;
     };
 
-    // Handle scroll event
+    let currentIndex = 0;
+    let isScrolling = false;
+    let lastScrollTime = 0;
+
+    // Handle scroll event with snapping
     const handleScroll = () => {
-      if (!section || !container) return;
+      if (!section || !container || isScrolling) return;
+
+      const now = Date.now();
+      if (now - lastScrollTime < 200) return; // Debounce rapid scroll events
 
       const rect = section.getBoundingClientRect();
       const sectionTop = rect.top;
-      const sectionHeight = rect.height;
       const viewportHeight = window.innerHeight;
 
-      // Start pinning when the section top reaches the top of the viewport
-      if (sectionTop <= 0 && sectionTop > -sectionHeight + viewportHeight) {
+      // Start showing content when the section is at the bottom of the viewport
+      if (sectionTop <= viewportHeight) {
         setIsPinned(true);
 
-        // Calculate how far we've scrolled into the section
-        const scrolledIntoSection = -sectionTop;
-        const maxScroll = sectionHeight - viewportHeight;
-        const progress = Math.min(scrolledIntoSection / maxScroll, 1);
-        setScrollProgress(progress);
+        // If we're just entering the section, show the first make
+        if (sectionTop > 0 && currentIndex === 0) {
+          container.style.transform = `translateX(0px)`;
+          setScrollProgress(0);
+          return;
+        }
 
-        // Apply horizontal scroll based on progress
-        const scrollDistance = calculateScrollDistance();
-        if (container) {
-          container.style.transform = `translateX(-${
-            progress * scrollDistance
-          }px)`;
+        // Calculate which make should be shown based on scroll position
+        // Adjust the calculation to account for the section entering the viewport
+        const scrolledIntoSection = viewportHeight - sectionTop;
+        const makeIndex = Math.min(
+          Math.max(0, Math.floor(scrolledIntoSection / viewportHeight)),
+          MAKES.length - 1
+        );
+
+        if (makeIndex !== currentIndex) {
+          isScrolling = true;
+          currentIndex = makeIndex;
+
+          // Update progress for progress bar
+          const progress = currentIndex / (MAKES.length - 1);
+          setScrollProgress(progress);
+
+          // Apply horizontal scroll to show the current make
+          const scrollDistance = calculateScrollDistance();
+          const targetX = (scrollDistance / (MAKES.length - 1)) * currentIndex;
+
+          container.style.transform = `translateX(-${targetX}px)`;
+
+          // Prevent additional scrolling for a short period
+          setTimeout(() => {
+            isScrolling = false;
+            lastScrollTime = Date.now();
+          }, 500);
         }
       } else {
         setIsPinned(false);
+        currentIndex = 0;
       }
     };
 
@@ -170,13 +196,18 @@ export function BrowseByMake() {
         {/* Horizontal scrollable content */}
         <div
           ref={containerRef}
-          className="flex transition-transform duration-100 will-change-transform h-screen"
+          className="flex transition-transform duration-300 will-change-transform h-screen"
           style={{
             width: `${MAKES.length * 100}vw`,
+            scrollSnapType: "x mandatory",
           }}
         >
           {MAKES.map((make) => (
-            <div key={make.id} className="w-screen h-screen flex-shrink-0">
+            <div
+              key={make.id}
+              className="w-screen h-screen flex-shrink-0"
+              style={{ scrollSnapAlign: "start" }}
+            >
               <div className="relative h-full w-full">
                 {/* Full-screen background image */}
                 <Image

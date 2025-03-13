@@ -104,7 +104,7 @@ export function BrowseLocations() {
   };
 
   return (
-    <section className="hidden md:block py-16">
+    <section className="block py-16">
       <div className="max-w-[1400px] mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12">
           Top-rated cars by type
@@ -123,14 +123,14 @@ export function BrowseLocations() {
           {/* Scrollable container */}
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-6 pb-8 scrollbar-hide snap-x snap-mandatory"
+            className="flex overflow-x-auto gap-3 md:gap-6 pb-8 scrollbar-hide snap-x snap-mandatory"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {CAR_TYPES.map((type) => (
               <Link
                 key={type.id}
                 href={`/cars/${type.name.toLowerCase()}`}
-                className="flex-none w-[150px] group/item transition-all duration-300 hover:w-[270px]"
+                className="flex-none w-[100px] md:w-[150px] group/item transition-all duration-300 md:hover:w-[270px]"
               >
                 <div className=" overflow-hidden bg-white h-full">
                   <div className="relative rounded-xl h-[350px] w-full overflow-hidden">

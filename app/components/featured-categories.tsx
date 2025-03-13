@@ -30,6 +30,19 @@ const CATEGORIES = [
   },
 ];
 
+const LOGOS = [
+  { src: "/BMW.png", alt: "BMW" },
+  { src: "/Mercedes.png", alt: "Mercedes" },
+  { src: "/porsche.webp", alt: "Porsche" },
+  { src: "/tesla.png", alt: "Tesla" },
+  { src: "/ford.png", alt: "Ford" },
+  { src: "/honda.png", alt: "Honda" },
+  { src: "/toyota.png", alt: "Toyota" },
+  { src: "/lexus.png", alt: "Lexus" },
+  { src: "/acura.png", alt: "Acura" },
+  { src: "/chevrolet.png", alt: "Chevrolet" },
+];
+
 export function FeaturedCategories() {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -37,20 +50,15 @@ export function FeaturedCategories() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Animate the scrolling text
-    const textElements = textRef.current?.querySelectorAll(".scroll-text");
-    textElements?.forEach((text) => {
-      gsap.to(text, {
-        xPercent: -100,
+    const textElement = textRef.current?.querySelector(".scroll-text");
+    if (textElement) {
+      gsap.to(textElement, {
+        x: "-50%",
+        duration: 30,
         ease: "none",
-        scrollTrigger: {
-          trigger: text,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1,
-        },
+        repeat: -1,
       });
-    });
+    }
 
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
@@ -59,11 +67,25 @@ export function FeaturedCategories() {
 
   return (
     <section className="py-16 bg-black" ref={containerRef}>
-      {/* Scrolling Typography */}
-      <div className="overflow-hidden mb-16" ref={textRef}>
-        <div className="scroll-text whitespace-nowrap text-[30px] sm:text-[50px] md:text-[80px] font-bold text-white opacity-20">
-          FIND YOUR DREAM CAR &nbsp; • &nbsp; SELL YOUR CAR &nbsp; • &nbsp; FIND
-          YOUR DREAM CAR &nbsp; • &nbsp; SELL YOUR CAR &nbsp; • &nbsp;
+      {/* Scrolling Logo Banner */}
+      <div className="relative overflow-hidden mb-16" ref={textRef}>
+        <div className="scroll-text flex items-center gap-16 min-w-max">
+          {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, index) => (
+            <div
+              key={index}
+              className="inline-block w-[120px] h-[60px] relative opacity-100"
+            >
+              <Image
+                src={logo.src}
+                alt={logo.alt}
+                fill
+                sizes="120px"
+                priority={index < 5}
+                className="object-contain"
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
+            </div>
+          ))}
         </div>
       </div>
 

@@ -12,6 +12,7 @@ import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 import { FeaturedCategories } from "./components/featured-categories";
 import { SearchBar } from "./components/search-bar";
+import { CountriesCategories } from "./components/countries-categories";
 
 export default function Home() {
   return (
@@ -29,7 +30,7 @@ export default function Home() {
             priority
           />
         </div>
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-between py-[90px]  md:py-[120px] items-center  text-center text-white">
+        <div className="relative z-10 container  h-full flex flex-col justify-between py-[90px]  md:py-[120px] items-center  text-center text-white">
           <div>
             <h1 className="text-2xl md:text-5xl font-bold mb-4">
               Find, buy, and own your dream car in
@@ -42,6 +43,7 @@ export default function Home() {
             </p>
           </div>
           <SearchBar />
+
           {/* <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden mt-8">
             <Search />
           </div> */}
@@ -52,6 +54,7 @@ export default function Home() {
         <CarsNearMe />
         <FeaturedCategories />
         <BrowseCategories />
+        <CountriesCategories />
         <TurnCarIntoCash />
         <BrowseLocations />
         {/* Add the new FeaturedCategories section here */}
