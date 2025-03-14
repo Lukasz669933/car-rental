@@ -69,7 +69,7 @@ export function FeaturedCategories() {
     <section className="py-16 bg-black" ref={containerRef}>
       {/* Scrolling Logo Banner */}
       <div className="relative overflow-hidden mb-16" ref={textRef}>
-        <div className="scroll-text flex items-center gap-16 min-w-max">
+        {/* <div className="scroll-text flex items-center gap-16 min-w-max">
           {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, index) => (
             <div
               key={index}
@@ -86,7 +86,7 @@ export function FeaturedCategories() {
               />
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Featured Categories Grid */}

@@ -55,7 +55,7 @@ export default function Home() {
         <FeaturedCategories />
         <BrowseCategories />
         <CountriesCategories />
-        <TurnCarIntoCash />
+        {/* <TurnCarIntoCash /> */}
         <BrowseLocations />
         {/* Add the new FeaturedCategories section here */}
         {/* <MeetHosts /> */}
