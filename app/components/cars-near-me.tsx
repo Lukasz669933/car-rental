@@ -220,8 +220,8 @@ export function CarsNearMe() {
                     <span>{car.year}</span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-600">
-                    <span className="font-medium">Mileage:</span>
-                    <span>{car.mileage.toLocaleString()} mi</span>
+                    <span className="font-medium">Fuel:</span>
+                    <span>{car.fuel.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-600">
                     <span className="font-medium">Engine:</span>
