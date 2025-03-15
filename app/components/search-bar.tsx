@@ -111,9 +111,9 @@ export function SearchBar() {
   ];
 
   return (
-    <div className="absolute bottom-40 left-1/2 -translate-x-1/2 translate-y-1/2 z-50 w-full max-w-3xl px-4">
-      <div className="mx-auto bg-white rounded-2xl shadow-lg p-4 w-full">
-        <div className="space-y-4">
+    <div className="absolute bottom-40 left-1/2 -translate-x-1/2 translate-y-1/2 z-50 w-full max-w-2xl px-4">
+      <div className="mx-auto bg-white rounded-xl shadow-lg p-3 w-full">
+        <div className="space-y-3">
           {/* Make and Model */}
           <div className="grid grid-cols-2 gap-3">
             <div className="relative" ref={makeRef}>
@@ -130,49 +130,43 @@ export function SearchBar() {
                 }}
                 placeholder="Select Make"
                 className={cn(
-                  "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm",
+                  "w-full pl-8 pr-2 py-1.5 rounded-lg border-2 bg-white text-black font-medium text-sm",
                   "transition-all duration-300 ease-in-out",
                   "placeholder:text-gray-400",
                   focused === "make" ? "border-blue-500" : "border-gray-100"
                 )}
               />
               {showMakeSuggestions && (
-                <>
-                  <div
-                    className="fixed inset-0 bg-black/20 z-40"
-                    onClick={() => setShowMakeSuggestions(false)}
-                  />
-                  <div
-                    className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
-                    style={{
-                      height: `${
-                        Math.min(
-                          make ? filteredMakes.length : CAR_MAKES.length,
-                          4
-                        ) * 46
-                      }px`,
-                    }}
-                  >
-                    {(make ? filteredMakes : CAR_MAKES).map((carMake) => (
-                      <div
-                        key={carMake.name}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0 flex items-center justify-between"
-                        onClick={() => {
-                          setMake(carMake.name);
-                          setShowMakeSuggestions(false);
-                          setModel(""); // Reset model when make changes
-                        }}
-                      >
-                        <span className="text-gray-900 font-medium">
-                          {carMake.name}
-                        </span>
-                        <span className="text-gray-600 text-xs">
-                          ({carMake.models.length})
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                <div
+                  className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-y-auto z-10"
+                  style={{
+                    height: `${
+                      Math.min(
+                        make ? filteredMakes.length : CAR_MAKES.length,
+                        4
+                      ) * 40
+                    }px`,
+                  }}
+                >
+                  {(make ? filteredMakes : CAR_MAKES).map((carMake) => (
+                    <div
+                      key={carMake.name}
+                      className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0 flex items-center justify-between"
+                      onClick={() => {
+                        setMake(carMake.name);
+                        setShowMakeSuggestions(false);
+                        setModel(""); // Reset model when make changes
+                      }}
+                    >
+                      <span className="text-gray-900 font-medium">
+                        {carMake.name}
+                      </span>
+                      <span className="text-gray-600 text-xs">
+                        ({carMake.models.length})
+                      </span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
             <div className="relative" ref={modelRef}>
@@ -195,33 +189,27 @@ export function SearchBar() {
                 )}
               />
               {showModelSuggestions && make && filteredModels.length > 0 && (
-                <>
-                  <div
-                    className="fixed inset-0 bg-black/20 z-40"
-                    onClick={() => setShowModelSuggestions(false)}
-                  />
-                  <div
-                    className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
-                    style={{
-                      height: `${Math.min(filteredModels.length, 4) * 46}px`,
-                    }}
-                  >
-                    {filteredModels.map((carModel) => (
-                      <div
-                        key={carModel}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
-                        onClick={() => {
-                          setModel(carModel);
-                          setShowModelSuggestions(false);
-                        }}
-                      >
-                        <span className="text-gray-900 font-medium">
-                          {carModel}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                <div
+                  className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-y-auto z-10"
+                  style={{
+                    height: `${Math.min(filteredModels.length, 4) * 40}px`,
+                  }}
+                >
+                  {filteredModels.map((carModel) => (
+                    <div
+                      key={carModel}
+                      className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                      onClick={() => {
+                        setModel(carModel);
+                        setShowModelSuggestions(false);
+                      }}
+                    >
+                      <span className="text-gray-900 font-medium">
+                        {carModel}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -248,33 +236,27 @@ export function SearchBar() {
                 )}
               />
               {focused === "startYear" && (
-                <>
-                  <div
-                    className="fixed inset-0 bg-black/20 z-40"
-                    onClick={() => setFocused(null)}
-                  />
-                  <div
-                    className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
-                    style={{
-                      height: `${Math.min(4, years.length) * 46}px`,
-                    }}
-                  >
-                    {years.map((year) => (
-                      <div
-                        key={year}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
-                        onClick={() => {
-                          setStartYear(year.toString());
-                          setFocused(null);
-                        }}
-                      >
-                        <span className="text-gray-900 font-medium">
-                          {year}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                <div
+                  className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-y-auto z-10"
+                  style={{
+                    height: `${Math.min(4, years.length) * 40}px`,
+                  }}
+                >
+                  {years.map((year) => (
+                    <div
+                      key={year}
+                      className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                      onClick={() => {
+                        setStartYear(year.toString());
+                        setFocused(null);
+                      }}
+                    >
+                      <span className="text-gray-900 font-medium">
+                        {year}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
             <div className="relative">
@@ -292,33 +274,27 @@ export function SearchBar() {
                 )}
               />
               {focused === "endYear" && (
-                <>
-                  <div
-                    className="fixed inset-0 bg-black/20 z-40"
-                    onClick={() => setFocused(null)}
-                  />
-                  <div
-                    className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
-                    style={{
-                      height: `${Math.min(4, years.length) * 46}px`,
-                    }}
-                  >
-                    {years.map((year) => (
-                      <div
-                        key={year}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
-                        onClick={() => {
-                          setEndYear(year.toString());
-                          setFocused(null);
-                        }}
-                      >
-                        <span className="text-gray-900 font-medium">
-                          {year}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                <div
+                  className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-y-auto z-10"
+                  style={{
+                    height: `${Math.min(4, years.length) * 40}px`,
+                  }}
+                >
+                  {years.map((year) => (
+                    <div
+                      key={year}
+                      className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                      onClick={() => {
+                        setEndYear(year.toString());
+                        setFocused(null);
+                      }}
+                    >
+                      <span className="text-gray-900 font-medium">
+                        {year}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -342,33 +318,27 @@ export function SearchBar() {
               )}
             />
             {focused === "type" && (
-              <>
-                <div
-                  className="fixed inset-0 bg-black/20 z-40"
-                  onClick={() => setFocused(null)}
-                />
-                <div
-                  className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
-                  style={{
-                    height: `${Math.min(4, carTypes.length) * 46}px`,
-                  }}
-                >
-                  {carTypes.map((carType) => (
-                    <div
-                      key={carType}
-                      className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
-                      onClick={() => {
-                        setType(carType.toLowerCase());
-                        setFocused(null);
-                      }}
-                    >
-                      <span className="text-gray-900 font-medium">
-                        {carType}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div
+                className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-y-auto z-10"
+                style={{
+                  height: `${Math.min(4, carTypes.length) * 40}px`,
+                }}
+              >
+                {carTypes.map((carType) => (
+                  <div
+                    key={carType}
+                    className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                    onClick={() => {
+                      setType(carType.toLowerCase());
+                      setFocused(null);
+                    }}
+                  >
+                    <span className="text-gray-900 font-medium">
+                      {carType}
+                    </span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
@@ -376,9 +346,9 @@ export function SearchBar() {
           <button
             type="button"
             onClick={handleSearch}
-            className="w-full px-4 py-3 rounded-lg font-medium text-sm bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center gap-2"
+            className="w-full px-4 py-2 rounded-lg font-medium text-sm bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center gap-2"
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-4 w-4" />
             <span>Find it now</span>
           </button>
         </div>
