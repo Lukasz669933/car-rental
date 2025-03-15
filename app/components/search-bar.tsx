@@ -232,46 +232,94 @@ export function SearchBar() {
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 <Calendar className="h-4 w-4 text-gray-400" />
               </div>
-              <select
+              <input
+                type="text"
                 value={startYear}
-                onChange={(e) => setStartYear(e.target.value)}
+                readOnly
+                placeholder="From Year"
+                onClick={() => setFocused("startYear")}
                 className={cn(
-                  "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black text-sm appearance-none",
+                  "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm cursor-pointer",
                   "transition-all duration-300 ease-in-out",
+                  "placeholder:text-gray-400",
                   focused === "startYear"
                     ? "border-blue-500"
                     : "border-gray-100"
                 )}
-                onFocus={() => setFocused("startYear")}
-                onBlur={() => setFocused(null)}
-              >
-                <option value="">From Year</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+              />
+              {focused === "startYear" && (
+                <>
+                  <div
+                    className="fixed inset-0 bg-black/20 z-40"
+                    onClick={() => setFocused(null)}
+                  />
+                  <div
+                    className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
+                    style={{
+                      height: `${Math.min(4, years.length) * 46}px`,
+                    }}
+                  >
+                    {years.map((year) => (
+                      <div
+                        key={year}
+                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                        onClick={() => {
+                          setStartYear(year.toString());
+                          setFocused(null);
+                        }}
+                      >
+                        <span className="text-gray-900 font-medium">
+                          {year}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
             <div className="relative">
-              <select
+              <input
+                type="text"
                 value={endYear}
-                onChange={(e) => setEndYear(e.target.value)}
+                readOnly
+                placeholder="To Year"
+                onClick={() => setFocused("endYear")}
                 className={cn(
-                  "w-full px-3 py-2 rounded-lg border-2 bg-white text-black text-sm appearance-none",
+                  "w-full px-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm cursor-pointer",
                   "transition-all duration-300 ease-in-out",
+                  "placeholder:text-gray-400",
                   focused === "endYear" ? "border-blue-500" : "border-gray-100"
                 )}
-                onFocus={() => setFocused("endYear")}
-                onBlur={() => setFocused(null)}
-              >
-                <option value="">To Year</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+              />
+              {focused === "endYear" && (
+                <>
+                  <div
+                    className="fixed inset-0 bg-black/20 z-40"
+                    onClick={() => setFocused(null)}
+                  />
+                  <div
+                    className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
+                    style={{
+                      height: `${Math.min(4, years.length) * 46}px`,
+                    }}
+                  >
+                    {years.map((year) => (
+                      <div
+                        key={year}
+                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                        onClick={() => {
+                          setEndYear(year.toString());
+                          setFocused(null);
+                        }}
+                      >
+                        <span className="text-gray-900 font-medium">
+                          {year}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -280,24 +328,48 @@ export function SearchBar() {
             <div className="absolute left-3 top-1/2 -translate-y-1/2">
               <Settings2 className="h-4 w-4 text-gray-400" />
             </div>
-            <select
+            <input
+              type="text"
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              readOnly
+              placeholder="Select Type"
+              onClick={() => setFocused("type")}
               className={cn(
-                "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black text-sm appearance-none",
+                "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm cursor-pointer",
                 "transition-all duration-300 ease-in-out",
+                "placeholder:text-gray-400",
                 focused === "type" ? "border-blue-500" : "border-gray-100"
               )}
-              onFocus={() => setFocused("type")}
-              onBlur={() => setFocused(null)}
-            >
-              <option value="">Select Type</option>
-              {carTypes.map((type) => (
-                <option key={type} value={type.toLowerCase()}>
-                  {type}
-                </option>
-              ))}
-            </select>
+            />
+            {focused === "type" && (
+              <>
+                <div
+                  className="fixed inset-0 bg-black/20 z-40"
+                  onClick={() => setFocused(null)}
+                />
+                <div
+                  className="absolute bottom-full mb-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl overflow-y-auto z-50"
+                  style={{
+                    height: `${Math.min(4, carTypes.length) * 46}px`,
+                  }}
+                >
+                  {carTypes.map((carType) => (
+                    <div
+                      key={carType}
+                      className="px-4 py-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-0"
+                      onClick={() => {
+                        setType(carType.toLowerCase());
+                        setFocused(null);
+                      }}
+                    >
+                      <span className="text-gray-900 font-medium">
+                        {carType}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Find it now Button */}

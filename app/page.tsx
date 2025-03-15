@@ -54,7 +54,7 @@ export default function Home() {
         <CarsNearMe />
         <FeaturedCategories />
         <BrowseCategories />
-        <CountriesCategories />
+        {/* <CountriesCategories /> */}
         {/* <TurnCarIntoCash /> */}
         <BrowseLocations />
         {/* Add the new FeaturedCategories section here */}

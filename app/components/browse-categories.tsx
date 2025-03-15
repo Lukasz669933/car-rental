@@ -125,12 +125,12 @@ export function BrowseCategories() {
                   Save ${brand.discount}
                 </div>
               )}
-              <div className="relative w-12 h-12">
+              <div className="relative w-24 h-12">
                 <Image
                   src={brand.logo || "/placeholder.svg"}
                   alt={brand.name}
                   fill
-                  className="object-contain"
+                  className="object-contain h-full w-auto"
                 />
               </div>
               <span className="text-lg font-medium">{brand.name}</span>
