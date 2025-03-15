@@ -130,7 +130,7 @@ export function SearchBar() {
                 }}
                 placeholder="Select Make"
                 className={cn(
-                  "w-full pl-8 pr-2 py-1.5 rounded-lg border-2 bg-white text-black font-medium text-sm",
+                  "w-full pl-8 pr-2 py-1.5 rounded-lg border-2 bg-white text-black font-medium text-base",
                   "transition-all duration-300 ease-in-out",
                   "placeholder:text-gray-400",
                   focused === "make" ? "border-blue-500" : "border-gray-100"
@@ -181,7 +181,7 @@ export function SearchBar() {
                 placeholder={make ? "Select Model" : "First Select Make"}
                 disabled={!make}
                 className={cn(
-                  "w-full px-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm",
+                  "w-full px-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-base",
                   "transition-all duration-300 ease-in-out",
                   "placeholder:text-gray-400",
                   !make && "bg-gray-50 cursor-not-allowed",
@@ -227,7 +227,7 @@ export function SearchBar() {
                 placeholder="From Year"
                 onClick={() => setFocused("startYear")}
                 className={cn(
-                  "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm cursor-pointer",
+                  "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-base cursor-pointer",
                   "transition-all duration-300 ease-in-out",
                   "placeholder:text-gray-400",
                   focused === "startYear"
@@ -267,7 +267,7 @@ export function SearchBar() {
                 placeholder="To Year"
                 onClick={() => setFocused("endYear")}
                 className={cn(
-                  "w-full px-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm cursor-pointer",
+                  "w-full px-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-base cursor-pointer",
                   "transition-all duration-300 ease-in-out",
                   "placeholder:text-gray-400",
                   focused === "endYear" ? "border-blue-500" : "border-gray-100"
@@ -311,7 +311,7 @@ export function SearchBar() {
               placeholder="Select Type"
               onClick={() => setFocused("type")}
               className={cn(
-                "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-sm cursor-pointer",
+                "w-full pl-9 pr-3 py-2 rounded-lg border-2 bg-white text-black font-medium text-base cursor-pointer",
                 "transition-all duration-300 ease-in-out",
                 "placeholder:text-gray-400",
                 focused === "type" ? "border-blue-500" : "border-gray-100"
