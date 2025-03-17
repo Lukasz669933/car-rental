@@ -48,7 +48,6 @@ export function FilterSearch() {
   const [type, setType] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
-  // const [isMakeModelSelected, setIsMakeModelSelected] = useState(false);
 
   // Get models for selected make
   const availableModels =
@@ -71,6 +70,14 @@ export function FilterSearch() {
     }
   };
 
+  const handleReset = () => {
+    setMake("");
+    setModel("");
+    setType("");
+    setStartYear("");
+    setEndYear("");
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto">
       {/* Mobile View */}
@@ -83,8 +90,6 @@ export function FilterSearch() {
               onChange={(e) => {
                 setMake(e.target.value);
                 setModel(""); // Reset model when make changes
-                // setType("");
-                // setIsMakeModelSelected(true);
               }}
               className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
               disabled={type !== ""}
@@ -104,8 +109,6 @@ export function FilterSearch() {
               value={model}
               onChange={(e) => {
                 setModel(e.target.value);
-                // setType("");
-                // setIsMakeModelSelected(true);
               }}
               className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
               disabled={!make || type !== ""}
@@ -129,10 +132,8 @@ export function FilterSearch() {
                 setModel("");
                 setStartYear("");
                 setEndYear("");
-                // setIsMakeModelSelected(false);
               }}
               className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
-              //   disabled={isMakeModelSelected}
             >
               <option value="" disabled>
                 Type
@@ -188,6 +189,13 @@ export function FilterSearch() {
             >
               Search
             </button>
+            {/* Reset Button */}
+            <button
+              onClick={handleReset}
+              className="w-full py-2.5 bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400 transition-colors text-sm"
+            >
+              Reset
+            </button>
           </div>
         </div>
       </div>
@@ -204,8 +212,6 @@ export function FilterSearch() {
                 onChange={(e) => {
                   setMake(e.target.value);
                   setModel(""); // Reset model when make changes
-                  // setType("");
-                  // setIsMakeModelSelected(true);
                 }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
                 disabled={type !== ""}
@@ -227,8 +233,6 @@ export function FilterSearch() {
                 value={model}
                 onChange={(e) => {
                   setModel(e.target.value);
-                  // setType("");
-                  // setIsMakeModelSelected(true);
                 }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
                 disabled={!make || type !== ""}
@@ -254,10 +258,8 @@ export function FilterSearch() {
                   setModel("");
                   setStartYear("");
                   setEndYear("");
-                  // setIsMakeModelSelected(false);
                 }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                // disabled={isMakeModelSelected}
               >
                 <option value="" disabled>
                   Type
@@ -315,12 +317,19 @@ export function FilterSearch() {
             </div>
 
             {/* Search Button */}
-            <div>
+            <div className="flex ">
               <button
                 onClick={handleSearch}
                 className="w-full h-full py-6 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
               >
                 Search
+              </button>
+              {/* Reset Button */}
+              <button
+                onClick={handleReset}
+                className="w-full h-full py-6 bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors border-l"
+              >
+                Reset
               </button>
             </div>
           </div>
