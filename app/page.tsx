@@ -3,16 +3,12 @@ import { Search } from "./components/search";
 import { CarsNearMe } from "./components/cars-near-me";
 import { BrowseCategories } from "./components/browse-categories";
 import { BrowseLocations } from "./components/browse-locations";
-import { MeetHosts } from "./components/meet-hosts";
 import { BrowseByMake } from "./components/browse-by-make";
-import { TurnCarIntoCash } from "./components/turn-car-into-cash";
 import { BlogSection } from "./components/blog-section";
-import { AppPromotion } from "./components/app-promotion";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 import { FeaturedCategories } from "./components/featured-categories";
 import { FilterSearch } from "./components/filter-search";
-import { CountriesCategories } from "./components/countries-categories";
 
 export default function Home() {
   return (
@@ -42,7 +38,9 @@ export default function Home() {
               range of vehicles for any budget.
             </p>
           </div>
-          <FilterSearch />
+          <div className="absolute md:bottom-10 bottom-5 left-5 right-5">
+            <FilterSearch />
+          </div>
 
           {/* <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden mt-8">
             <Search />

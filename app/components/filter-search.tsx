@@ -157,9 +157,9 @@ export function FilterSearch() {
             {/* Search Button */}
             <button
               onClick={handleSearch}
-              className="w-full py-2.5 bg-[#8046FF] text-white font-medium rounded-md hover:bg-[#6a3ad6] transition-colors text-sm"
+              className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors text-sm"
             >
-              Show 871 matches
+              Search
             </button>
           </div>
         </div>
@@ -271,9 +271,9 @@ export function FilterSearch() {
             <div>
               <button
                 onClick={handleSearch}
-                className="w-full h-full py-6 bg-[#8046FF] text-white font-medium hover:bg-[#6a3ad6] transition-colors"
+                className="w-full h-full py-6 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
               >
-                Show 871 matches
+                Search
               </button>
             </div>
           </div>
