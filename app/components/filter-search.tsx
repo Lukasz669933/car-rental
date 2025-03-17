@@ -26,6 +26,7 @@ const CAR_MAKES = [
 
 // Car types
 const CAR_TYPES = [
+  "All Types",
   "Sedan",
   "SUV",
   "Truck",
@@ -133,7 +134,13 @@ export function FilterSearch() {
                 setStartYear("");
                 setEndYear("");
               }}
-              className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+              className={cn(
+                "w-full h-10 px-3 border rounded-md font-medium text-sm",
+                make || model
+                  ? "bg-gray-200 text-gray-500"
+                  : "bg-orange-100 text-orange-500"
+              )}
+              disabled={make || model}
             >
               <option value="" disabled>
                 Type
@@ -259,7 +266,13 @@ export function FilterSearch() {
                   setStartYear("");
                   setEndYear("");
                 }}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                className={cn(
+                  "w-full h-full px-4 py-6 border-0 font-medium focus:ring-0 focus:outline-none",
+                  make || model
+                    ? "bg-gray-200 text-gray-500"
+                    : "bg-black/80 text-white "
+                )}
+                disabled={make || model}
               >
                 <option value="" disabled>
                   Type
@@ -327,7 +340,7 @@ export function FilterSearch() {
               {/* Reset Button */}
               <button
                 onClick={handleReset}
-                className="w-full h-full py-6 bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors border-l"
+                className="w-[150px] h-full py-6 bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors border-l"
               >
                 Reset
               </button>
