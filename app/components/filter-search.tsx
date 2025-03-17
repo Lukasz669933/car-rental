@@ -48,6 +48,7 @@ export function FilterSearch() {
   const [type, setType] = useState("");
   const [startYear, setStartYear] = useState("");
   const [endYear, setEndYear] = useState("");
+  // const [isMakeModelSelected, setIsMakeModelSelected] = useState(false);
 
   // Get models for selected make
   const availableModels =
@@ -64,6 +65,12 @@ export function FilterSearch() {
     // TODO: Implement actual search functionality
   };
 
+  const validateEndDate = (endDate: string) => {
+    if (startYear && endDate < startYear) {
+      setEndYear("");
+    }
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto">
       {/* Mobile View */}
@@ -76,8 +83,11 @@ export function FilterSearch() {
               onChange={(e) => {
                 setMake(e.target.value);
                 setModel(""); // Reset model when make changes
+                // setType("");
+                // setIsMakeModelSelected(true);
               }}
               className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+              disabled={type !== ""}
             >
               <option value="" disabled>
                 Make
@@ -92,9 +102,13 @@ export function FilterSearch() {
             {/* Model Dropdown */}
             <select
               value={model}
-              onChange={(e) => setModel(e.target.value)}
+              onChange={(e) => {
+                setModel(e.target.value);
+                // setType("");
+                // setIsMakeModelSelected(true);
+              }}
               className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
-              disabled={!make}
+              disabled={!make || type !== ""}
             >
               <option value="" disabled>
                 Model
@@ -109,8 +123,16 @@ export function FilterSearch() {
             {/* Type Dropdown */}
             <select
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              onChange={(e) => {
+                setType(e.target.value);
+                setMake("");
+                setModel("");
+                setStartYear("");
+                setEndYear("");
+                // setIsMakeModelSelected(false);
+              }}
               className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+              //   disabled={isMakeModelSelected}
             >
               <option value="" disabled>
                 Type
@@ -128,6 +150,7 @@ export function FilterSearch() {
                 value={startYear}
                 onChange={(e) => setStartYear(e.target.value)}
                 className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                disabled={type !== ""}
               >
                 <option value="" disabled>
                   Start Year
@@ -140,8 +163,12 @@ export function FilterSearch() {
               </select>
               <select
                 value={endYear}
-                onChange={(e) => setEndYear(e.target.value)}
+                onChange={(e) => {
+                  setEndYear(e.target.value);
+                  validateEndDate(e.target.value);
+                }}
                 className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                disabled={type !== ""}
               >
                 <option value="" disabled>
                   End Year
@@ -177,8 +204,11 @@ export function FilterSearch() {
                 onChange={(e) => {
                   setMake(e.target.value);
                   setModel(""); // Reset model when make changes
+                  // setType("");
+                  // setIsMakeModelSelected(true);
                 }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                disabled={type !== ""}
               >
                 <option value="" disabled>
                   Make
@@ -195,9 +225,13 @@ export function FilterSearch() {
             <div className="border-r h-full">
               <select
                 value={model}
-                onChange={(e) => setModel(e.target.value)}
+                onChange={(e) => {
+                  setModel(e.target.value);
+                  // setType("");
+                  // setIsMakeModelSelected(true);
+                }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={!make}
+                disabled={!make || type !== ""}
               >
                 <option value="" disabled>
                   Model
@@ -214,8 +248,16 @@ export function FilterSearch() {
             <div className="h-full">
               <select
                 value={type}
-                onChange={(e) => setType(e.target.value)}
+                onChange={(e) => {
+                  setType(e.target.value);
+                  setMake("");
+                  setModel("");
+                  setStartYear("");
+                  setEndYear("");
+                  // setIsMakeModelSelected(false);
+                }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                // disabled={isMakeModelSelected}
               >
                 <option value="" disabled>
                   Type
@@ -237,6 +279,7 @@ export function FilterSearch() {
                 value={startYear}
                 onChange={(e) => setStartYear(e.target.value)}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                disabled={type !== ""}
               >
                 <option value="" disabled>
                   Start Year
@@ -253,8 +296,12 @@ export function FilterSearch() {
             <div className="border-r h-full">
               <select
                 value={endYear}
-                onChange={(e) => setEndYear(e.target.value)}
+                onChange={(e) => {
+                  setEndYear(e.target.value);
+                  validateEndDate(e.target.value);
+                }}
                 className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                disabled={type !== ""}
               >
                 <option value="" disabled>
                   End Year
