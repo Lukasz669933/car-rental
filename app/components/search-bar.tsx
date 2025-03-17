@@ -251,9 +251,7 @@ export function SearchBar() {
                         setFocused(null);
                       }}
                     >
-                      <span className="text-gray-900 font-medium">
-                        {year}
-                      </span>
+                      <span className="text-gray-900 font-medium">{year}</span>
                     </div>
                   ))}
                 </div>
@@ -289,9 +287,7 @@ export function SearchBar() {
                         setFocused(null);
                       }}
                     >
-                      <span className="text-gray-900 font-medium">
-                        {year}
-                      </span>
+                      <span className="text-gray-900 font-medium">{year}</span>
                     </div>
                   ))}
                 </div>
@@ -333,9 +329,7 @@ export function SearchBar() {
                       setFocused(null);
                     }}
                   >
-                    <span className="text-gray-900 font-medium">
-                      {carType}
-                    </span>
+                    <span className="text-gray-900 font-medium">{carType}</span>
                   </div>
                 ))}
               </div>

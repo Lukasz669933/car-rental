@@ -11,7 +11,7 @@ import { AppPromotion } from "./components/app-promotion";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 import { FeaturedCategories } from "./components/featured-categories";
-import { SearchBar } from "./components/search-bar";
+import { FilterSearch } from "./components/filter-search";
 import { CountriesCategories } from "./components/countries-categories";
 
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
               range of vehicles for any budget.
             </p>
           </div>
-          <SearchBar />
+          <FilterSearch />
 
           {/* <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden mt-8">
             <Search />
