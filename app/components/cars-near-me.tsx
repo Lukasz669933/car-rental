@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Star, Gauge, Fuel, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const CARS = [
   {
@@ -87,6 +87,7 @@ export function CarsNearMe() {
   const [isAnimating, setIsAnimating] = useState<{ [key: number]: boolean }>(
     {}
   );
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const nextImage = (carId: number) => {
     if (isAnimating[carId]) return;
@@ -114,6 +115,17 @@ export function CarsNearMe() {
     setTimeout(() => {
       setIsAnimating((prev) => ({ ...prev, [carId]: false }));
     }, 300);
+  };
+
+  const handleSwipe = (
+    carId: number,
+    direction: "left" | "right"
+  ) => {
+    if (direction === "right") {
+      nextImage(carId);
+    } else {
+      prevImage(carId);
+    }
   };
 
   return (

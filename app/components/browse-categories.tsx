@@ -120,11 +120,6 @@ export function BrowseCategories() {
               href={`/brand/${brand.name.toLowerCase()}`}
               className="relative bg-white border border-gray-400 rounded-lg shadow-sm p-6 flex flex-col md:flex-row items-center gap-4 hover:shadow-md transition-shadow"
             >
-              {brand.discount && (
-                <div className="absolute top-0 left-0 bg-teal-100 text-teal-800 py-1 px-3 rounded-tl-lg rounded-br-lg text-xs font-medium">
-                  Save ${brand.discount}
-                </div>
-              )}
               <div className="relative w-24 h-12">
                 <Image
                   src={brand.logo || "/placeholder.svg"}
