@@ -178,7 +178,7 @@ export function FilterSearch() {
                 "w-full h-10 px-3 border rounded-md font-medium text-sm",
                 make || model
                   ? "bg-gray-200 text-gray-500"
-                  : "bg-black/80 text-whitebg-black/80 text-white"
+                  : "bg-black/80 text-white"
               )}
               disabled={make || model}
             >
@@ -213,143 +213,152 @@ export function FilterSearch() {
       {/* Desktop View */}
       <div className="hidden lg:block">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Top row: Make & Model together, Start Year, End Year */}
-          <div className="grid grid-cols-4">
-            {/* Make Dropdown */}
-            <div className="border-r h-full">
-              <select
-                value={make}
-                onChange={(e) => {
-                  setMake(e.target.value);
-                  setModel(""); // Reset model when make changes
-                }}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={type !== ""}
-              >
-                <option value="" disabled>
-                  Make
-                </option>
-                {CAR_MAKES.map((carMake) => (
-                  <option key={carMake.name} value={carMake.name}>
-                    {carMake.name}
+          {/* Using a single grid for consistent heights */}
+          <div className="grid grid-cols-1 grid-rows-2">
+            {/* Top row: Make, Model, Start Year, End Year */}
+            <div className="grid grid-cols-4 h-[72px]">
+              {" "}
+              {/* Fixed height for consistency */}
+              {/* Make Dropdown */}
+              <div className="border-r h-full flex">
+                <select
+                  value={make}
+                  onChange={(e) => {
+                    setMake(e.target.value);
+                    setModel(""); // Reset model when make changes
+                  }}
+                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  disabled={type !== ""}
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  <option value="" disabled>
+                    Make
                   </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Model Dropdown */}
-            <div className="border-r h-full">
-              <select
-                value={model}
-                onChange={(e) => {
-                  setModel(e.target.value);
-                }}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={!make || type !== ""}
-              >
-                <option value="" disabled>
-                  Model
-                </option>
-                {availableModels.map((modelOption) => (
-                  <option key={modelOption} value={modelOption}>
-                    {modelOption}
+                  {CAR_MAKES.map((carMake) => (
+                    <option key={carMake.name} value={carMake.name}>
+                      {carMake.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* Model Dropdown */}
+              <div className="border-r h-full flex">
+                <select
+                  value={model}
+                  onChange={(e) => {
+                    setModel(e.target.value);
+                  }}
+                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  disabled={!make || type !== ""}
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  <option value="" disabled>
+                    Model
                   </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Start Year Dropdown */}
-            <div className="border-r h-full">
-              <select
-                value={startYear}
-                onChange={(e) => setStartYear(e.target.value)}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={type !== ""}
-              >
-                <option value="" disabled>
-                  Start Year
-                </option>
-                {YEARS.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
+                  {availableModels.map((modelOption) => (
+                    <option key={modelOption} value={modelOption}>
+                      {modelOption}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* Start Year Dropdown */}
+              <div className="border-r h-full flex">
+                <select
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  disabled={type !== ""}
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  <option value="" disabled>
+                    Start Year
                   </option>
-                ))}
-              </select>
-            </div>
-
-            {/* End Year Dropdown */}
-            <div className="h-full">
-              <select
-                value={endYear}
-                onChange={(e) => {
-                  setEndYear(e.target.value);
-                  validateEndDate(e.target.value);
-                }}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={type !== ""}
-              >
-                <option value="" disabled>
-                  End Year
-                </option>
-                {YEARS.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
+                  {YEARS.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* End Year Dropdown */}
+              <div className="h-full flex">
+                <select
+                  value={endYear}
+                  onChange={(e) => {
+                    setEndYear(e.target.value);
+                    validateEndDate(e.target.value);
+                  }}
+                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  disabled={type !== ""}
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  <option value="" disabled>
+                    End Year
                   </option>
-                ))}
-              </select>
+                  {YEARS.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
 
-          {/* Bottom row: Type, Search Button, Reset Button */}
-          <div className="grid grid-cols-3 border-t">
-            {/* Type Dropdown - Moved to bottom row */}
-            <div className="border-r h-full">
-              <select
-                value={type}
-                onChange={(e) => {
-                  setType(e.target.value);
-                  setMake("");
-                  setModel("");
-                  setStartYear("");
-                  setEndYear("");
-                }}
-                className={cn(
-                  "w-full h-full px-4 py-6 border-0 font-medium focus:ring-0 focus:outline-none",
-                  make || model
-                    ? "bg-gray-200 text-gray-500"
-                    : "bg-black/80 text-white "
-                )}
-                disabled={make || model}
-              >
-                <option value="" disabled>
-                  Type
-                </option>
-                {CAR_TYPES.map((carType) => (
-                  <option key={carType} value={carType}>
-                    {carType}
+            {/* Bottom row: Type, Search Button, Reset Button */}
+            <div className="grid grid-cols-3 border-t h-[72px]">
+              {" "}
+              {/* Fixed height for consistency */}
+              {/* Type Dropdown - Moved to bottom row */}
+              <div className="border-r h-full flex">
+                <select
+                  value={type}
+                  onChange={(e) => {
+                    setType(e.target.value);
+                    setMake("");
+                    setModel("");
+                    setStartYear("");
+                    setEndYear("");
+                  }}
+                  className={cn(
+                    "w-full h-full px-4 border-0 font-medium focus:ring-0 focus:outline-none appearance-none",
+                    make || model
+                      ? "bg-gray-200 text-gray-500"
+                      : "bg-black/80 text-white"
+                  )}
+                  disabled={make || model}
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  <option value="" disabled>
+                    Type
                   </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Search Button */}
-            <div className="flex border-r">
-              <button
-                onClick={handleSearch}
-                className="w-full h-full py-6 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
-              >
-                Search
-              </button>
-            </div>
-
-            {/* Reset Button */}
-            <div className="flex">
-              <button
-                onClick={handleReset}
-                className="w-full h-full py-6 bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors"
-              >
-                Reset
-              </button>
+                  {CAR_TYPES.map((carType) => (
+                    <option key={carType} value={carType}>
+                      {carType}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* Search Button */}
+              <div className="flex border-r h-full">
+                <button
+                  onClick={handleSearch}
+                  className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  Search
+                </button>
+              </div>
+              {/* Reset Button */}
+              <div className="flex h-full">
+                <button
+                  onClick={handleReset}
+                  className="w-full h-full bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors"
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
         </div>
