@@ -1,9 +1,16 @@
 "use client";
 import Image from "next/image";
-import { Star, Gauge, Fuel, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
+// Import Swiper React components and required modules
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const CARS = [
   {
@@ -13,6 +20,7 @@ const CARS = [
       "https://images.unsplash.com/photo-1581540222194-0def2dda95b8?q=80&w=2067&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1568844293986-8d0400bd4745?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop",
     ],
     price: 28500,
     rating: 4.8,
@@ -31,6 +39,7 @@ const CARS = [
       "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?q=80&w=2070&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1494905998402-395d579af36f?q=80&w=2070&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1547245324-d777c6f05e80?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop",
     ],
     price: 42800,
     rating: 4.9,
@@ -49,6 +58,7 @@ const CARS = [
       "https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1517994112540-009c47ea476b?q=80&w=2070&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1518987048-93e29699e79a?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=2037&auto=format&fit=crop",
     ],
     price: 215000,
     rating: 5.0,
@@ -67,6 +77,7 @@ const CARS = [
       "https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2073&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=2072&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2064&auto=format&fit=crop",
     ],
     price: 58900,
     rating: 4.7,
@@ -80,53 +91,95 @@ const CARS = [
   },
 ];
 
-export function CarsNearMe() {
-  const [currentImageIndexes, setCurrentImageIndexes] = useState<{
-    [key: number]: number;
-  }>({});
-  const [isAnimating, setIsAnimating] = useState<{ [key: number]: boolean }>(
-    {}
+// Custom Swiper component for car images
+function CarImageSwiper({ images, carId }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const isSeeMoreSlide = activeIndex === 3; // Now the 4th image (index 3) is the "See More" slide
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    setActiveIndex(swiper.activeIndex);
+  };
+
+  return (
+    <div className="h-48 relative">
+      <Swiper
+        modules={[Navigation, Pagination]}
+        spaceBetween={0}
+        slidesPerView={1}
+        navigation={{
+          nextEl: `.swiper-button-next-${carId}`,
+          prevEl: `.swiper-button-prev-${carId}`,
+        }}
+        pagination={{
+          clickable: true,
+          el: `.swiper-pagination-${carId}`,
+          bulletClass: "swiper-pagination-bullet !w-1.5 !h-1.5 !bg-white/50",
+          bulletActiveClass: "!bg-white",
+        }}
+        onSlideChange={handleSlideChange}
+        className="h-full w-full"
+      >
+        {images.map((image, index) => (
+          <SwiperSlide key={index} className="relative h-full w-full">
+            <Image
+              src={image || "/placeholder.svg"}
+              alt={`Car image ${index + 1}`}
+              fill
+              className="object-cover"
+            />
+
+            {/* See More overlay for the 4th image (index 3) */}
+            {index === 3 && (
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white">
+                <Plus className="h-6 w-6 mb-1" />
+                <span className="text-sm font-medium">See More</span>
+              </div>
+            )}
+          </SwiperSlide>
+        ))}
+
+        {/* Custom navigation buttons */}
+        <div
+          className={`swiper-button-prev-${carId} absolute left-2 top-1/2 z-10 -translate-y-1/2`}
+        >
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 bg-white/80 hover:bg-white rounded-full"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        </div>
+        <div
+          className={`swiper-button-next-${carId} absolute right-2 top-1/2 z-10 -translate-y-1/2 ${
+            isSeeMoreSlide ? "opacity-0 pointer-events-none" : ""
+          }`}
+        >
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 bg-white/80 hover:bg-white rounded-full"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Custom pagination */}
+        <div
+          className={`swiper-pagination-${carId} absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1 z-10`}
+        ></div>
+      </Swiper>
+    </div>
   );
-  const imageContainerRef = useRef<HTMLDivElement>(null);
+}
 
-  const nextImage = (carId: number) => {
-    if (isAnimating[carId]) return;
-    setIsAnimating((prev) => ({ ...prev, [carId]: true }));
+export function CarsNearMe() {
+  // Add client-side only rendering to avoid hydration issues with Swiper
+  const [isMounted, setIsMounted] = useState(false);
 
-    setCurrentImageIndexes((prev) => ({
-      ...prev,
-      [carId]: Math.min((prev[carId] || 0) + 1, 2),
-    }));
-
-    setTimeout(() => {
-      setIsAnimating((prev) => ({ ...prev, [carId]: false }));
-    }, 300);
-  };
-
-  const prevImage = (carId: number) => {
-    if (isAnimating[carId]) return;
-    setIsAnimating((prev) => ({ ...prev, [carId]: true }));
-
-    setCurrentImageIndexes((prev) => ({
-      ...prev,
-      [carId]: Math.max((prev[carId] || 0) - 1, 0),
-    }));
-
-    setTimeout(() => {
-      setIsAnimating((prev) => ({ ...prev, [carId]: false }));
-    }, 300);
-  };
-
-  const handleSwipe = (
-    carId: number,
-    direction: "left" | "right"
-  ) => {
-    if (direction === "right") {
-      nextImage(carId);
-    } else {
-      prevImage(carId);
-    }
-  };
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <section className="py-12 bg-gray-50">
@@ -144,71 +197,11 @@ export function CarsNearMe() {
               key={car.id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <div className="relative h-48 overflow-hidden">
-                <div
-                  className="flex transition-transform duration-300 ease-in-out absolute w-[300%] h-full"
-                  style={{
-                    transform: `translateX(-${
-                      (currentImageIndexes[car.id] || 0) * 33.333
-                    }%)`,
-                  }}
-                >
-                  {car.images.map((image, index) => (
-                    <div key={index} className="w-full h-full flex-shrink-0">
-                      <Image
-                        src={image}
-                        alt={`${car.name} - Image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="absolute inset-0 flex items-center justify-between px-2 z-10">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 bg-white/80 hover:bg-white"
-                    onClick={() => prevImage(car.id)}
-                    disabled={
-                      (currentImageIndexes[car.id] || 0) === 0 ||
-                      isAnimating[car.id]
-                    }
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 bg-white/80 hover:bg-white"
-                    onClick={() => nextImage(car.id)}
-                    disabled={
-                      (currentImageIndexes[car.id] || 0) === 2 ||
-                      isAnimating[car.id]
-                    }
-                  >
-                    {(currentImageIndexes[car.id] || 0) === 2 ? (
-                      <span className="text-xs">More</span>
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1 z-10">
-                  {[0, 1, 2].map((index) => (
-                    <div
-                      key={index}
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        (currentImageIndexes[car.id] || 0) === index
-                          ? "bg-white"
-                          : "bg-white/50"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
+              {isMounted && (
+                <CarImageSwiper images={car.images} carId={car.id} />
+              )}
 
-              <div className="p-4 ">
+              <div className="p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-semibold">{car.name}</h3>
                   <div className="text-right">
@@ -217,14 +210,6 @@ export function CarsNearMe() {
                     </span>
                   </div>
                 </div>
-
-                {/* <div className="flex items-center gap-1 mb-4">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium">{car.rating}</span>
-                  <span className="text-sm text-gray-500">
-                    ({car.reviews} reviews)
-                  </span>
-                </div> */}
 
                 <div className="grid grid-cols-2 gap-2 my-4">
                   <div className="flex items-center gap-1 text-sm text-gray-600">
