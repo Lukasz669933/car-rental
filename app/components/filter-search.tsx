@@ -85,72 +85,47 @@ export function FilterSearch() {
       <div className="lg:hidden">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-3 space-y-3">
-            {/* Make Dropdown */}
-            <select
-              value={make}
-              onChange={(e) => {
-                setMake(e.target.value);
-                setModel(""); // Reset model when make changes
-              }}
-              className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
-              disabled={type !== ""}
-            >
-              <option value="" disabled>
-                Make
-              </option>
-              {CAR_MAKES.map((carMake) => (
-                <option key={carMake.name} value={carMake.name}>
-                  {carMake.name}
+            {/* Make & Model in one row */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Make Dropdown */}
+              <select
+                value={make}
+                onChange={(e) => {
+                  setMake(e.target.value);
+                  setModel(""); // Reset model when make changes
+                }}
+                className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                disabled={type !== ""}
+              >
+                <option value="" disabled>
+                  Make
                 </option>
-              ))}
-            </select>
+                {CAR_MAKES.map((carMake) => (
+                  <option key={carMake.name} value={carMake.name}>
+                    {carMake.name}
+                  </option>
+                ))}
+              </select>
 
-            {/* Model Dropdown */}
-            <select
-              value={model}
-              onChange={(e) => {
-                setModel(e.target.value);
-              }}
-              className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
-              disabled={!make || type !== ""}
-            >
-              <option value="" disabled>
-                Model
-              </option>
-              {availableModels.map((modelOption) => (
-                <option key={modelOption} value={modelOption}>
-                  {modelOption}
+              {/* Model Dropdown */}
+              <select
+                value={model}
+                onChange={(e) => {
+                  setModel(e.target.value);
+                }}
+                className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                disabled={!make || type !== ""}
+              >
+                <option value="" disabled>
+                  Model
                 </option>
-              ))}
-            </select>
-
-            {/* Type Dropdown */}
-            <select
-              value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-                setMake("");
-                setModel("");
-                setStartYear("");
-                setEndYear("");
-              }}
-              className={cn(
-                "w-full h-10 px-3 border rounded-md font-medium text-sm",
-                make || model
-                  ? "bg-gray-200 text-gray-500"
-                  : "bg-orange-100 text-orange-500"
-              )}
-              disabled={make || model}
-            >
-              <option value="" disabled>
-                Type
-              </option>
-              {CAR_TYPES.map((carType) => (
-                <option key={carType} value={carType}>
-                  {carType}
-                </option>
-              ))}
-            </select>
+                {availableModels.map((modelOption) => (
+                  <option key={modelOption} value={modelOption}>
+                    {modelOption}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Year Range - 2 columns */}
             <div className="grid grid-cols-2 gap-3">
@@ -189,6 +164,34 @@ export function FilterSearch() {
               </select>
             </div>
 
+            {/* Type Dropdown - Moved to just before search button */}
+            <select
+              value={type}
+              onChange={(e) => {
+                setType(e.target.value);
+                setMake("");
+                setModel("");
+                setStartYear("");
+                setEndYear("");
+              }}
+              className={cn(
+                "w-full h-10 px-3 border rounded-md font-medium text-sm",
+                make || model
+                  ? "bg-gray-200 text-gray-500"
+                  : "bg-black/80 text-whitebg-black/80 text-white"
+              )}
+              disabled={make || model}
+            >
+              <option value="" disabled>
+                Type
+              </option>
+              {CAR_TYPES.map((carType) => (
+                <option key={carType} value={carType}>
+                  {carType}
+                </option>
+              ))}
+            </select>
+
             {/* Search Button */}
             <button
               onClick={handleSearch}
@@ -210,8 +213,8 @@ export function FilterSearch() {
       {/* Desktop View */}
       <div className="hidden lg:block">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Top row: Make, Model, Type */}
-          <div className="grid grid-cols-3">
+          {/* Top row: Make & Model together, Start Year, End Year */}
+          <div className="grid grid-cols-4">
             {/* Make Dropdown */}
             <div className="border-r h-full">
               <select
@@ -255,8 +258,52 @@ export function FilterSearch() {
               </select>
             </div>
 
-            {/* Type Dropdown */}
+            {/* Start Year Dropdown */}
+            <div className="border-r h-full">
+              <select
+                value={startYear}
+                onChange={(e) => setStartYear(e.target.value)}
+                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                disabled={type !== ""}
+              >
+                <option value="" disabled>
+                  Start Year
+                </option>
+                {YEARS.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* End Year Dropdown */}
             <div className="h-full">
+              <select
+                value={endYear}
+                onChange={(e) => {
+                  setEndYear(e.target.value);
+                  validateEndDate(e.target.value);
+                }}
+                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
+                disabled={type !== ""}
+              >
+                <option value="" disabled>
+                  End Year
+                </option>
+                {YEARS.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Bottom row: Type, Search Button, Reset Button */}
+          <div className="grid grid-cols-3 border-t">
+            {/* Type Dropdown - Moved to bottom row */}
+            <div className="border-r h-full">
               <select
                 value={type}
                 onChange={(e) => {
@@ -284,63 +331,22 @@ export function FilterSearch() {
                 ))}
               </select>
             </div>
-          </div>
-
-          {/* Bottom row: Start Year, End Year, Button */}
-          <div className="grid grid-cols-3 border-t">
-            {/* Start Year Dropdown */}
-            <div className="border-r h-full">
-              <select
-                value={startYear}
-                onChange={(e) => setStartYear(e.target.value)}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={type !== ""}
-              >
-                <option value="" disabled>
-                  Start Year
-                </option>
-                {YEARS.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* End Year Dropdown */}
-            <div className="border-r h-full">
-              <select
-                value={endYear}
-                onChange={(e) => {
-                  setEndYear(e.target.value);
-                  validateEndDate(e.target.value);
-                }}
-                className="w-full h-full px-4 py-6 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none"
-                disabled={type !== ""}
-              >
-                <option value="" disabled>
-                  End Year
-                </option>
-                {YEARS.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
 
             {/* Search Button */}
-            <div className="flex ">
+            <div className="flex border-r">
               <button
                 onClick={handleSearch}
                 className="w-full h-full py-6 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
               >
                 Search
               </button>
-              {/* Reset Button */}
+            </div>
+
+            {/* Reset Button */}
+            <div className="flex">
               <button
                 onClick={handleReset}
-                className="w-[150px] h-full py-6 bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors border-l"
+                className="w-full h-full py-6 bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors"
               >
                 Reset
               </button>
