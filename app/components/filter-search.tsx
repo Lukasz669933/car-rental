@@ -95,8 +95,7 @@ export function FilterSearch() {
                   setMake(e.target.value);
                   setModel(""); // Reset model when make changes
                 }}
-                className="w-full h-12 px-3 border  rounded-md bg-white text-black font-medium "
-                disabled={type !== ""}
+                className="w-full h-16 px-3 border  rounded-md bg-white text-black font-medium "
               >
                 <option value="" disabled>
                   Make
@@ -114,7 +113,7 @@ export function FilterSearch() {
                 onChange={(e) => {
                   setModel(e.target.value);
                 }}
-                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
                 disabled={!make || type !== ""}
               >
                 <option value="" disabled>
@@ -134,7 +133,6 @@ export function FilterSearch() {
                 value={startYear}
                 onChange={(e) => setStartYear(e.target.value)}
                 className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
-                disabled={type !== ""}
               >
                 <option value="" disabled>
                   Start Year
@@ -152,7 +150,6 @@ export function FilterSearch() {
                   validateEndDate(e.target.value);
                 }}
                 className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
-                disabled={type !== ""}
               >
                 <option value="" disabled>
                   End Year
@@ -177,11 +174,9 @@ export function FilterSearch() {
               }}
               className={cn(
                 "w-full h-16 px-3 border rounded-md font-medium ",
-                make || model
-                  ? "bg-gray-200 text-gray-500"
-                  : "bg-black/80 text-white"
+                model ? "bg-gray-200 text-gray-500" : " text-black"
               )}
-              disabled={make || model}
+              disabled={model}
             >
               <option value="" disabled>
                 Type
@@ -193,22 +188,13 @@ export function FilterSearch() {
               ))}
             </select>
 
-            <div className="flex items-center gap-3">
-              {/* Search Button */}
-              <button
-                onClick={handleSearch}
-                className="w-full py-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Search
-              </button>
-              {/* Reset Button */}
-              <button
-                onClick={handleReset}
-                className="w-full py-4 max-w-[70px] flex items-center justify-center bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400 transition-colors "
-              >
-                <RotateCcw />
-              </button>
-            </div>
+            {/* Search Button */}
+            <button
+              onClick={handleSearch}
+              className="w-full py-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Search
+            </button>
           </div>
         </div>
       </div>
@@ -276,9 +262,7 @@ export function FilterSearch() {
                   }}
                   className={cn(
                     "w-full h-full px-4 border-0 font-medium focus:ring-0 focus:outline-none appearance-none",
-                    make || model
-                      ? "bg-gray-200 text-gray-500"
-                      : "bg-black/80 text-white"
+                    make || model ? "bg-gray-200 text-gray-500" : " text-black"
                   )}
                   disabled={make || model}
                   style={{ height: "100%" }} // Inline style for Safari
@@ -339,27 +323,15 @@ export function FilterSearch() {
                 </select>
               </div>
 
-              <div className="flex items-center  ">
-                {/* Search Button */}
-                <div className="flex w-full border-r h-full">
-                  <button
-                    onClick={handleSearch}
-                    className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
-                    style={{ height: "100%" }} // Inline style for Safari
-                  >
-                    Search
-                  </button>
-                </div>
-                {/* Reset Button */}
-                <div className="flex h-full w-[100px]">
-                  <button
-                    onClick={handleReset}
-                    className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors"
-                    style={{ height: "100%" }} // Inline style for Safari
-                  >
-                    <RotateCcw />
-                  </button>
-                </div>
+              {/* Search Button */}
+              <div className="flex w-full border-r h-full">
+                <button
+                  onClick={handleSearch}
+                  className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+                  style={{ height: "100%" }} // Inline style for Safari
+                >
+                  Search
+                </button>
               </div>
             </div>
           </div>
