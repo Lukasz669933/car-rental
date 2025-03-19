@@ -1,38 +1,42 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const BLOG_POSTS = [
   {
     id: 1,
     title: "How to buy a car easily",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071&auto=format&fit=crop",
     category: "Guides",
     date: "March 5, 2025",
   },
   {
     id: 2,
     title: "Best cars to buy in 2025",
-    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop",
     category: "Guides",
     date: "March 3, 2025",
   },
   {
     id: 3,
     title: "How to sell your car easily",
-    image: "https://images.unsplash.com/photo-1471479917193-f00955256257?q=80&w=2831&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1471479917193-f00955256257?q=80&w=2831&auto=format&fit=crop",
     category: "Guides",
     date: "March 1, 2025",
   },
   {
     id: 4,
     title: "Financing options for car buyers",
-    image: "https://images.unsplash.com/photo-1589310243389-96a5483213a8?q=80&w=1974&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1589310243389-96a5483213a8?q=80&w=1974&auto=format&fit=crop",
     category: "Guides",
     date: "February 28, 2025",
   },
-]
+];
 
 export function BlogSection() {
   return (
@@ -50,10 +54,14 @@ export function BlogSection() {
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <Badge className="absolute top-3 left-3 bg-blue-600">{post.category}</Badge>
+                <Badge className="absolute top-3 left-3 text-white bg-blue-600">
+                  {post.category}
+                </Badge>
               </div>
               <p className="text-sm text-gray-500 mb-2">{post.date}</p>
-              <h3 className="font-semibold group-hover:text-blue-600 transition-colors">{post.title}</h3>
+              <h3 className="font-semibold group-hover:text-blue-600 transition-colors">
+                {post.title}
+              </h3>
             </Link>
           ))}
         </div>
@@ -63,6 +71,5 @@ export function BlogSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-

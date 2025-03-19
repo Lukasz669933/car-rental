@@ -87,7 +87,7 @@ export function FilterSearch() {
                   setMake(e.target.value);
                   setModel(""); // Reset model when make changes
                 }}
-                className="w-full h-12 px-3 border  rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border  rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
                   Make
@@ -105,7 +105,7 @@ export function FilterSearch() {
                 onChange={(e) => {
                   setModel(e.target.value);
                 }}
-                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
                 disabled={!make || type !== ""}
               >
                 <option value="" disabled>
@@ -124,7 +124,7 @@ export function FilterSearch() {
               <select
                 value={startYear}
                 onChange={(e) => setStartYear(e.target.value)}
-                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
                   Start Year
@@ -141,7 +141,7 @@ export function FilterSearch() {
                   setEndYear(e.target.value);
                   validateEndDate(e.target.value);
                 }}
-                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border rounded-md bg-white/70 text-black font-medium "
               >
                 <option value="" disabled>
                   End Year
@@ -161,10 +161,7 @@ export function FilterSearch() {
               value={type}
               onChange={(e) => {
                 setType(e.target.value);
-                setMake("");
                 setModel("");
-                setStartYear("");
-                setEndYear("");
               }}
               className={cn(
                 "w-full h-12 px-3 border bg-gray-200 rounded-md font-medium ",
@@ -209,7 +206,6 @@ export function FilterSearch() {
                     setModel(""); // Reset model when make changes
                   }}
                   className="w-full h-full px-4 font-semibold border-0 bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
-                  disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
@@ -253,16 +249,13 @@ export function FilterSearch() {
                   value={type}
                   onChange={(e) => {
                     setType(e.target.value);
-                    setMake("");
                     setModel("");
-                    setStartYear("");
-                    setEndYear("");
                   }}
                   className={cn(
                     "w-full h-full px-4 border-0 font-semibold bg-gray-200  focus:ring-0 focus:outline-none appearance-none",
-                    make || model ? "bg-gray-200 text-gray-500" : " text-black"
+                    model ? "bg-gray-200 text-gray-500" : " text-black"
                   )}
-                  disabled={make || model}
+                  disabled={model}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
@@ -285,7 +278,6 @@ export function FilterSearch() {
                   value={startYear}
                   onChange={(e) => setStartYear(e.target.value)}
                   className="w-full h-full px-4 font-semibold border-0   bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
-                  disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
@@ -307,7 +299,6 @@ export function FilterSearch() {
                     validateEndDate(e.target.value);
                   }}
                   className="w-full h-full px-4 border-0  font-semibold bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
-                  disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
                   <option value="" disabled>
