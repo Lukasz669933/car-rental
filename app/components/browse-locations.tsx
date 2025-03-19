@@ -105,7 +105,7 @@ export function BrowseLocations() {
 
   return (
     <section className="block py-16">
-      <div className="max-w-[1400px] mx-auto px-4">
+      <div className="max-w-[1400px] w-[98%] mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12">
           Top-rated cars by type
         </h2>

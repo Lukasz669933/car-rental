@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Search } from "./components/search";
 import { CarsNearMe } from "./components/cars-near-me";
 import { BrowseCategories } from "./components/browse-categories";
 import { BrowseLocations } from "./components/browse-locations";
@@ -53,15 +52,9 @@ export default function Home() {
         <CarsNearMe />
         <FeaturedCategories />
         <BrowseCategories />
-        {/* <CountriesCategories /> */}
-        {/* <TurnCarIntoCash /> */}
         <BrowseLocations />
-        {/* Add the new FeaturedCategories section here */}
-        {/* <MeetHosts /> */}
-        {/* Full-screen Browse by Make section */}
         <BrowseByMake />
         <BlogSection />
-        {/* <AppPromotion /> */}
       </main>
 
       <Footer />
