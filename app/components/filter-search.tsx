@@ -72,19 +72,11 @@ export function FilterSearch() {
     }
   };
 
-  const handleReset = () => {
-    setMake("");
-    setModel("");
-    setType("");
-    setStartYear("");
-    setEndYear("");
-  };
-
   return (
     <div className="w-full  max-w-6xl mx-auto">
       {/* Mobile View */}
       <div className="lg:hidden">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className=" rounded-lg shadow-lg overflow-hidden">
           <div className="p-3 space-y-3">
             {/* Make & Model in one row */}
             <div className="grid grid-cols-2 gap-3">
@@ -95,7 +87,7 @@ export function FilterSearch() {
                   setMake(e.target.value);
                   setModel(""); // Reset model when make changes
                 }}
-                className="w-full h-16 px-3 border  rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border  rounded-md bg-white text-black font-medium "
               >
                 <option value="" disabled>
                   Make
@@ -113,7 +105,7 @@ export function FilterSearch() {
                 onChange={(e) => {
                   setModel(e.target.value);
                 }}
-                className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
                 disabled={!make || type !== ""}
               >
                 <option value="" disabled>
@@ -132,7 +124,7 @@ export function FilterSearch() {
               <select
                 value={startYear}
                 onChange={(e) => setStartYear(e.target.value)}
-                className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
               >
                 <option value="" disabled>
                   Start Year
@@ -149,7 +141,7 @@ export function FilterSearch() {
                   setEndYear(e.target.value);
                   validateEndDate(e.target.value);
                 }}
-                className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
+                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
               >
                 <option value="" disabled>
                   End Year
@@ -162,6 +154,8 @@ export function FilterSearch() {
               </select>
             </div>
 
+            <p>OR</p>
+
             {/* Type Dropdown - Moved to just before search button */}
             <select
               value={type}
@@ -173,7 +167,7 @@ export function FilterSearch() {
                 setEndYear("");
               }}
               className={cn(
-                "w-full h-16 px-3 border rounded-md font-medium ",
+                "w-full h-12 px-3 border bg-gray-200 rounded-md font-medium ",
                 model ? "bg-gray-200 text-gray-500" : " text-black"
               )}
               disabled={model}
@@ -201,11 +195,11 @@ export function FilterSearch() {
 
       {/* Desktop View */}
       <div className="hidden lg:block">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className=" rounded-lg shadow-lg overflow-hidden">
           {/* Using a single grid for consistent heights */}
-          <div className="grid grid-cols-1 grid-rows-2">
+          <div className="grid grid-cols-1 gap-4 grid-rows-2">
             {/* Top row: Make, Model, Type */}
-            <div className="grid grid-cols-3 h-[92px]">
+            <div className="grid grid-cols-3 gap-4 h-[72px]">
               {/* Make Dropdown */}
               <div className="border-r h-full flex">
                 <select
@@ -214,7 +208,7 @@ export function FilterSearch() {
                     setMake(e.target.value);
                     setModel(""); // Reset model when make changes
                   }}
-                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  className="w-full h-full px-4 font-semibold border-0 bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
@@ -235,7 +229,11 @@ export function FilterSearch() {
                   onChange={(e) => {
                     setModel(e.target.value);
                   }}
-                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  className={`w-full h-full px-4 border-0 bg-white/70 font-medium focus:ring-0 focus:outline-none appearance-none ${
+                    !make || type !== ""
+                      ? "text-gray-600 font-light"
+                      : "text-black"
+                  }`}
                   disabled={!make || type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
@@ -261,7 +259,7 @@ export function FilterSearch() {
                     setEndYear("");
                   }}
                   className={cn(
-                    "w-full h-full px-4 border-0 font-medium focus:ring-0 focus:outline-none appearance-none",
+                    "w-full h-full px-4 border-0 font-semibold bg-gray-200  focus:ring-0 focus:outline-none appearance-none",
                     make || model ? "bg-gray-200 text-gray-500" : " text-black"
                   )}
                   disabled={make || model}
@@ -280,13 +278,13 @@ export function FilterSearch() {
             </div>
 
             {/* Bottom row: Start Year, End Year, Search Button, Reset Button */}
-            <div className="grid grid-cols-3 border-t h-[92px]">
+            <div className="grid grid-cols-3 gap-4  h-[72px]">
               {/* Start Year Dropdown */}
-              <div className="border-r h-full flex">
+              <div className=" h-full flex">
                 <select
                   value={startYear}
                   onChange={(e) => setStartYear(e.target.value)}
-                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  className="w-full h-full px-4 font-semibold border-0   bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
@@ -301,14 +299,14 @@ export function FilterSearch() {
                 </select>
               </div>
               {/* End Year Dropdown */}
-              <div className="border-r h-full flex">
+              <div className=" h-full flex">
                 <select
                   value={endYear}
                   onChange={(e) => {
                     setEndYear(e.target.value);
                     validateEndDate(e.target.value);
                   }}
-                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  className="w-full h-full px-4 border-0  font-semibold bg-white/70 text-black  focus:ring-0 focus:outline-none appearance-none"
                   disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
@@ -324,7 +322,7 @@ export function FilterSearch() {
               </div>
 
               {/* Search Button */}
-              <div className="flex w-full border-r h-full">
+              <div className="flex w-full  h-full">
                 <button
                   onClick={handleSearch}
                   className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
