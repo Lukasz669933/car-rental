@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { RotateCcw } from "lucide-react";
 
 // Car makes and models data (using existing data from search-bar.tsx)
 const CAR_MAKES = [
@@ -80,7 +81,7 @@ export function FilterSearch() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full  max-w-6xl mx-auto">
       {/* Mobile View */}
       <div className="lg:hidden">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -94,7 +95,7 @@ export function FilterSearch() {
                   setMake(e.target.value);
                   setModel(""); // Reset model when make changes
                 }}
-                className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                className="w-full h-12 px-3 border  rounded-md bg-white text-black font-medium "
                 disabled={type !== ""}
               >
                 <option value="" disabled>
@@ -113,7 +114,7 @@ export function FilterSearch() {
                 onChange={(e) => {
                   setModel(e.target.value);
                 }}
-                className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                className="w-full h-12 px-3 border rounded-md bg-white text-black font-medium "
                 disabled={!make || type !== ""}
               >
                 <option value="" disabled>
@@ -132,7 +133,7 @@ export function FilterSearch() {
               <select
                 value={startYear}
                 onChange={(e) => setStartYear(e.target.value)}
-                className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
                 disabled={type !== ""}
               >
                 <option value="" disabled>
@@ -150,7 +151,7 @@ export function FilterSearch() {
                   setEndYear(e.target.value);
                   validateEndDate(e.target.value);
                 }}
-                className="w-full h-10 px-3 border rounded-md bg-white text-black font-medium text-sm"
+                className="w-full h-16 px-3 border rounded-md bg-white text-black font-medium "
                 disabled={type !== ""}
               >
                 <option value="" disabled>
@@ -175,7 +176,7 @@ export function FilterSearch() {
                 setEndYear("");
               }}
               className={cn(
-                "w-full h-10 px-3 border rounded-md font-medium text-sm",
+                "w-full h-16 px-3 border rounded-md font-medium ",
                 make || model
                   ? "bg-gray-200 text-gray-500"
                   : "bg-black/80 text-white"
@@ -192,20 +193,22 @@ export function FilterSearch() {
               ))}
             </select>
 
-            {/* Search Button */}
-            <button
-              onClick={handleSearch}
-              className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors text-sm"
-            >
-              Search
-            </button>
-            {/* Reset Button */}
-            <button
-              onClick={handleReset}
-              className="w-full py-2.5 bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400 transition-colors text-sm"
-            >
-              Reset
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Search Button */}
+              <button
+                onClick={handleSearch}
+                className="w-full py-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Search
+              </button>
+              {/* Reset Button */}
+              <button
+                onClick={handleReset}
+                className="w-full py-4 max-w-[70px] flex items-center justify-center bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400 transition-colors "
+              >
+                <RotateCcw />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -215,10 +218,8 @@ export function FilterSearch() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Using a single grid for consistent heights */}
           <div className="grid grid-cols-1 grid-rows-2">
-            {/* Top row: Make, Model, Start Year, End Year */}
-            <div className="grid grid-cols-4 h-[72px]">
-              {" "}
-              {/* Fixed height for consistency */}
+            {/* Top row: Make, Model, Type */}
+            <div className="grid grid-cols-3 h-[92px]">
               {/* Make Dropdown */}
               <div className="border-r h-full flex">
                 <select
@@ -262,55 +263,8 @@ export function FilterSearch() {
                   ))}
                 </select>
               </div>
-              {/* Start Year Dropdown */}
-              <div className="border-r h-full flex">
-                <select
-                  value={startYear}
-                  onChange={(e) => setStartYear(e.target.value)}
-                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
-                  disabled={type !== ""}
-                  style={{ height: "100%" }} // Inline style for Safari
-                >
-                  <option value="" disabled>
-                    Start Year
-                  </option>
-                  {YEARS.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {/* End Year Dropdown */}
+              {/* Type Dropdown - Moved to top row */}
               <div className="h-full flex">
-                <select
-                  value={endYear}
-                  onChange={(e) => {
-                    setEndYear(e.target.value);
-                    validateEndDate(e.target.value);
-                  }}
-                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
-                  disabled={type !== ""}
-                  style={{ height: "100%" }} // Inline style for Safari
-                >
-                  <option value="" disabled>
-                    End Year
-                  </option>
-                  {YEARS.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Bottom row: Type, Search Button, Reset Button */}
-            <div className="grid grid-cols-3 border-t h-[72px]">
-              {" "}
-              {/* Fixed height for consistency */}
-              {/* Type Dropdown - Moved to bottom row */}
-              <div className="border-r h-full flex">
                 <select
                   value={type}
                   onChange={(e) => {
@@ -339,25 +293,73 @@ export function FilterSearch() {
                   ))}
                 </select>
               </div>
-              {/* Search Button */}
-              <div className="flex border-r h-full">
-                <button
-                  onClick={handleSearch}
-                  className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+            </div>
+
+            {/* Bottom row: Start Year, End Year, Search Button, Reset Button */}
+            <div className="grid grid-cols-3 border-t h-[92px]">
+              {/* Start Year Dropdown */}
+              <div className="border-r h-full flex">
+                <select
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  Search
-                </button>
+                  <option value="" disabled>
+                    Start Year
+                  </option>
+                  {YEARS.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
-              {/* Reset Button */}
-              <div className="flex h-full">
-                <button
-                  onClick={handleReset}
-                  className="w-full h-full bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors"
+              {/* End Year Dropdown */}
+              <div className="border-r h-full flex">
+                <select
+                  value={endYear}
+                  onChange={(e) => {
+                    setEndYear(e.target.value);
+                    validateEndDate(e.target.value);
+                  }}
+                  className="w-full h-full px-4 border-0 bg-white text-black font-medium focus:ring-0 focus:outline-none appearance-none"
+                  disabled={type !== ""}
                   style={{ height: "100%" }} // Inline style for Safari
                 >
-                  Reset
-                </button>
+                  <option value="" disabled>
+                    End Year
+                  </option>
+                  {YEARS.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center  ">
+                {/* Search Button */}
+                <div className="flex w-full border-r h-full">
+                  <button
+                    onClick={handleSearch}
+                    className="w-full h-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+                    style={{ height: "100%" }} // Inline style for Safari
+                  >
+                    Search
+                  </button>
+                </div>
+                {/* Reset Button */}
+                <div className="flex h-full w-[100px]">
+                  <button
+                    onClick={handleReset}
+                    className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-700 font-medium hover:bg-gray-400 transition-colors"
+                    style={{ height: "100%" }} // Inline style for Safari
+                  >
+                    <RotateCcw />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

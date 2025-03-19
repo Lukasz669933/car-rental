@@ -22,21 +22,22 @@ export default function Home() {
             src="/Hero2-QKTSHICM.webp"
             alt="Car sales hero image"
             fill
-            className="object-cover brightness-75"
+            className="object-cover hidden md:block brightness-75"
+            priority
+          />
+          <Image
+            src="/Hero2-QKTSHICM - copy.webp"
+            alt="Car sales hero image"
+            fill
+            className="object-cover md:hidden brightness-75"
             priority
           />
         </div>
         <div className="relative z-10 container  h-full flex flex-col justify-between py-[90px]  md:py-[120px] items-center  text-center text-white">
           <div>
             <h1 className="text-xl md:text-5xl font-bold mb-4">
-              Find, buy, and own your dream car in
-              <br />
-              Easy steps.
+              Find, buy, and own your dream car in Easy steps.
             </h1>
-            <p className="text-sm md:text-lg mb-8 max-w-2xl">
-              Purchase the perfect car for your lifestyle. Choose from a wide
-              range of vehicles for any budget.
-            </p>
           </div>
           <div className="absolute md:bottom-10 bottom-5 left-5 right-5">
             <FilterSearch />
