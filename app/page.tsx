@@ -26,7 +26,7 @@ export default function Home() {
             priority
           />
           <Image
-            src="/Hero2-QKTSHICM - copy.webp"
+            src="/Hero2-QKTSHICM - Copy.webp"
             alt="Car sales hero image"
             fill
             className="object-cover md:hidden brightness-75"
