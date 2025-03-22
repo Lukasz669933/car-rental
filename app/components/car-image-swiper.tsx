@@ -22,7 +22,7 @@ function CarImageSwiper({ images, carId }) {
 
   return (
     <div
-      className="h-48 relative group"
+      className="h-[160px] md:h-[200px] relative group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -74,7 +74,7 @@ function CarImageSwiper({ images, carId }) {
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 bg-white/80 hover:bg-white rounded-full"
+          className="h-8 w-8 bg-white/80 hidden md:block hover:bg-white rounded-full"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -87,7 +87,7 @@ function CarImageSwiper({ images, carId }) {
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 bg-white/80 hover:bg-white rounded-full"
+          className="h-8 w-8 bg-white/80 hidden md:block hover:bg-white rounded-full"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
