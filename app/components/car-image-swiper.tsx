@@ -22,7 +22,7 @@ function CarImageSwiper({ images, carId }) {
 
   return (
     <div
-      className="h-[160px] md:h-[200px] relative group"
+      className="h-[230px] md:h-[200px] relative group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

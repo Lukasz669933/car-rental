@@ -9,7 +9,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Ojest - Car Rental Service",
   description: "Find, book, and rent a car in easy steps",
-  generator: "v0.dev",
+  generator: "Uzair S.",
+  icons: "/favicon.ico",
 };
 
 export default function RootLayout({
@@ -19,6 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className={inter.className}>
         {/* <AnimatedLoader /> */}
         {children}

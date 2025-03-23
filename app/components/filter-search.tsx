@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { RotateCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Car makes and models data (using existing data from search-bar.tsx)
 const CAR_MAKES = [
@@ -45,6 +46,7 @@ const YEARS = Array.from({ length: 30 }, (_, i) =>
 );
 
 export function FilterSearch() {
+  const router = useRouter();
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [type, setType] = useState("");
@@ -63,6 +65,10 @@ export function FilterSearch() {
       startYear,
       endYear,
     });
+
+    router.push(
+      `/results?make=${make}&model=${model}&type=${type}&startYear=${startYear}&endYear=${endYear}`
+    );
     // TODO: Implement actual search functionality
   };
 
