@@ -3,7 +3,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { LayoutGrid, LayoutList, ChevronUp, ArrowUpDown } from "lucide-react";
+import {
+  LayoutGrid,
+  LayoutList,
+  ChevronUp,
+  ArrowUpDown,
+  ArrowLeft,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,6 +34,7 @@ import CarCard from "./car-card";
 import { CARS } from "@/lib/data";
 import Image from "next/image";
 import { Footer } from "./footer";
+import { useRouter } from "next/navigation";
 
 // Extend the car data with more entries for pagination
 const EXTENDED_CARS = [
@@ -38,6 +45,7 @@ const EXTENDED_CARS = [
 ];
 
 export function SearchResults() {
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,12 +129,12 @@ export function SearchResults() {
   const FilterContent = () => (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium">Price Range</h3>
+        <h3 className=" md:text-base font-medium">Price Range</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label
               htmlFor="min-price"
-              className="text-sm text-muted-foreground mb-1 block"
+              className=" md:text-base text-muted-foreground mb-1 block"
             >
               Min Price
             </label>
@@ -147,7 +155,7 @@ export function SearchResults() {
           <div>
             <label
               htmlFor="max-price"
-              className="text-sm text-muted-foreground mb-1 block"
+              className=" md:text-base text-muted-foreground mb-1 block"
             >
               Max Price
             </label>
@@ -169,11 +177,11 @@ export function SearchResults() {
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-sm font-medium">Location</h3>
+        <h3 className="text-sm md:text-base font-medium">Location</h3>
         <div>
           <label
             htmlFor="location"
-            className="text-sm text-muted-foreground mb-1 block"
+            className=" md:text-base text-muted-foreground mb-1 block"
           >
             Search Location
           </label>
@@ -210,7 +218,9 @@ export function SearchResults() {
       </div>
 
       <div>
-        <label className="text-sm font-medium mb-2 block">Engine Size</label>
+        <label className=" md:text-base font-medium mb-2 block">
+          Engine Size
+        </label>
         <Select value={engineSize} onValueChange={setEngineSize}>
           <SelectTrigger>
             <SelectValue placeholder="Any size" />
@@ -227,7 +237,7 @@ export function SearchResults() {
 
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="transmission">
-          <AccordionTrigger className="text-sm font-medium py-2">
+          <AccordionTrigger className=" md:text-base font-medium py-2">
             Transmission
           </AccordionTrigger>
           <AccordionContent>
@@ -236,38 +246,44 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="auto"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={transmission.includes("auto")}
                   onChange={() => handleTransmissionChange("auto")}
                 />
-                <label htmlFor="auto">Automatic</label>
+                <label htmlFor="auto" className=" md:text-base">
+                  Automatic
+                </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="manual"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={transmission.includes("manual")}
                   onChange={() => handleTransmissionChange("manual")}
                 />
-                <label htmlFor="manual">Manual</label>
+                <label htmlFor="manual" className=" md:text-base">
+                  Manual
+                </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="semi-auto"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={transmission.includes("semi-auto")}
                   onChange={() => handleTransmissionChange("semi-auto")}
                 />
-                <label htmlFor="semi-auto">Semi-Automatic</label>
+                <label htmlFor="semi-auto" className=" md:text-base">
+                  Semi-Automatic
+                </label>
               </div>
             </div>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="fuel-type">
-          <AccordionTrigger className="text-sm font-medium py-2">
+          <AccordionTrigger className=" md:text-base font-medium py-2">
             Fuel type
           </AccordionTrigger>
           <AccordionContent>
@@ -276,41 +292,49 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="petrol"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={fuelType.includes("petrol")}
                   onChange={() => handleFuelTypeChange("petrol")}
                 />
-                <label htmlFor="petrol">Petrol</label>
+                <label htmlFor="petrol" className=" md:text-base">
+                  Petrol
+                </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="diesel"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={fuelType.includes("diesel")}
                   onChange={() => handleFuelTypeChange("diesel")}
                 />
-                <label htmlFor="diesel">Diesel</label>
+                <label htmlFor="diesel" className="md:text-base">
+                  Diesel
+                </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="hybrid"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={fuelType.includes("hybrid")}
                   onChange={() => handleFuelTypeChange("hybrid")}
                 />
-                <label htmlFor="hybrid">Hybrid</label>
+                <label htmlFor="hybrid" className="md:text-base">
+                  Hybrid
+                </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="electric"
-                  className="mr-2"
+                  className="mr-2 h-4 w-4"
                   checked={fuelType.includes("electric")}
                   onChange={() => handleFuelTypeChange("electric")}
                 />
-                <label htmlFor="electric">Electric</label>
+                <label htmlFor="electric" className="text-md md:text-base">
+                  Electric
+                </label>
               </div>
             </div>
           </AccordionContent>
@@ -323,22 +347,40 @@ export function SearchResults() {
     <div className="container mx-auto px-4">
       {/* <Header /> */}
       {/* Hero Section */}
-      <section className="relative h-[370px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
+      <section className="relative h-[200px] md:h-[370px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/results.jpg"
             alt="Car sales hero image"
             fill
-            className="object-cover brightness-75"
+            className="object-cover brightness-75 md:hidden"
+            priority
+          />
+          <Image
+            src="/results - Copy.jpg"
+            alt="Car sales hero image"
+            fill
+            className="object-cover brightness-75 hidden md:block"
             priority
           />
         </div>
-        <div className="relative z-10 container h-full flex flex-col justify-between py-[90px] md:py-[120px] items-center text-center text-white">
-          <div>{/* Hero content */}</div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="absolute z-30 top-4 left-4 items-center gap-1 bg-blue-900/50 border border-blue-400 backdrop-blur-md rounded-md p-2 text-blue-400 hover:text-blue-400 hover:bg-blue-900/20"
+          onClick={() => router.push("/")}
+        >
+          <ArrowLeft size={16} />
+          Back to Home
+        </Button>
+        <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
+          <h1 className="text-xl md:text-5xl md:w-[55%] font-bold ">
+            Find your dream car easily with advanced search filters.{" "}
+          </h1>
         </div>
       </section>
 
-      {/* Mobile filters toggle - sticky at the top */}
+      {/* Mobile filters toggle and sort - sticky at the top */}
       <div className="lg:hidden bg-white sticky top-0 z-10 bg-background py-3 border-b flex justify-between items-center">
         <Button
           variant="outline"
@@ -351,7 +393,18 @@ export function SearchResults() {
             className={mobileFiltersOpen ? "" : "rotate-180"}
           />
         </Button>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger className="w-[120px] h-9">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="relevance">Relevance</SelectItem>
+              <SelectItem value="price-low">Price: Low to High</SelectItem>
+              <SelectItem value="price-high">Price: High to Low</SelectItem>
+              <SelectItem value="newest">Newest First</SelectItem>
+            </SelectContent>
+          </Select>
           <Button
             variant={viewMode === "grid" ? "default" : "outline"}
             size="icon"
@@ -377,7 +430,9 @@ export function SearchResults() {
           <DialogHeader className="sticky top-0 z-10 bg-white p-6 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DialogTitle>Filters</DialogTitle>
+                <DialogTitle className="text-base md:text-lg">
+                  Filters
+                </DialogTitle>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -453,63 +508,59 @@ export function SearchResults() {
         <div className="flex-1" id="results-top">
           {/* Desktop view controls and sort */}
           <div className="hidden lg:flex justify-between items-center mb-6">
-            <div className="flex gap-2">
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("grid")}
-                className="h-9 w-9"
-              >
-                <LayoutGrid size={18} />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("list")}
-                className="h-9 w-9"
-              >
-                <LayoutList size={18} />
-              </Button>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("grid")}
+                  className="h-9 w-9"
+                >
+                  <LayoutGrid size={18} />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("list")}
+                  className="h-9 w-9"
+                >
+                  <LayoutList size={18} />
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Sort by:</span>
+                <Select value={sortOption} onValueChange={setSortOption}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Relevance</SelectItem>
+                    <SelectItem value="price-low">
+                      Price: Low to High
+                    </SelectItem>
+                    <SelectItem value="price-high">
+                      Price: High to Low
+                    </SelectItem>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Sort by:</span>
-              <Select value={sortOption} onValueChange={setSortOption}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                </SelectContent>
-              </Select>
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Showing {indexOfFirstItem + 1}-
+                {Math.min(indexOfLastItem, EXTENDED_CARS.length)} of{" "}
+                {EXTENDED_CARS.length} results
+              </p>
             </div>
           </div>
 
-          {/* Mobile sort dropdown */}
-          <div className="lg:hidden mb-4">
-            <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="relevance">
-                  <div className="flex items-center">
-                    <ArrowUpDown size={16} className="mr-2" />
-                    <span>Relevance</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Remove mobile sort dropdown since it's now in the sticky header */}
 
-          {/* Results count */}
-          <div className="mb-6">
+          {/* Results count - only shown on mobile, as desktop now has it in the header area */}
+          <div className="mb-6 lg:hidden">
             <p className="text-sm text-muted-foreground">
               Showing {indexOfFirstItem + 1}-
               {Math.min(indexOfLastItem, EXTENDED_CARS.length)} of{" "}
