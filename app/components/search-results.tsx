@@ -28,7 +28,6 @@ import { CARS } from "@/lib/data";
 import Image from "next/image";
 import { Footer } from "./footer";
 import { useRouter } from "next/navigation";
-import { Slider } from "@/components/ui/slider";
 
 // Custom utility for hiding scrollbars while maintaining scroll functionality
 const scrollbarHideStyles = `
@@ -38,6 +37,45 @@ const scrollbarHideStyles = `
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
+  }
+  
+  /* Increase size of all form elements on mobile */
+  @media (max-width: 768px) {
+    .mobile-large-select [data-radix-select-trigger] {
+      min-height: 4rem;
+      font-size: 1.25rem;
+      padding: 1rem 1.25rem;
+    }
+    
+    .mobile-large-select [data-radix-select-content] {
+      font-size: 1.25rem;
+    }
+    
+    .mobile-large-select [data-radix-select-item] {
+      padding: 1rem 1.25rem;
+      min-height: 3.5rem;
+    }
+    
+    .mobile-large-checkbox {
+      width: 2rem !important;
+      height: 2rem !important;
+      margin-right: 1rem !important;
+    }
+    
+    .mobile-large-text {
+      font-size: 1.25rem !important;
+    }
+    
+    .mobile-large-input {
+      min-height: 4rem;
+      font-size: 1.25rem;
+    }
+
+    /* Make accordion triggers larger */
+    .accordion-trigger {
+      font-size: 1.25rem !important;
+      padding: 1rem 0 !important;
+    }
   }
 `;
 
@@ -56,7 +94,7 @@ export function SearchResults() {
   const [currentPage, setCurrentPage] = useState(1);
   const [minPrice, setMinPrice] = useState("0");
   const [maxPrice, setMaxPrice] = useState("150");
-  const [searchRadius, setSearchRadius] = useState([25]);
+  const [searchRadius, setSearchRadius] = useState([50]);
   const [engineSize, setEngineSize] = useState("");
   const [transmission, setTransmission] = useState<string[]>([]);
   const [fuelType, setFuelType] = useState<string[]>([]);
@@ -140,18 +178,14 @@ export function SearchResults() {
 
   // Handle accordion toggle
   const handleAccordionToggle = (value: string) => {
-    setOpenAccordionItems((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value]
-    );
+    setOpenAccordionItems((prev) => (prev.includes(value) ? [] : [value]));
   };
 
   // Update the clearFilters function to include the new filters (around line 120)
   const clearFilters = () => {
     setMinPrice("0");
     setMaxPrice("150");
-    setSearchRadius([25]);
+    setSearchRadius([50]);
     setEngineSize("");
     setTransmission([]);
     setFuelType([]);
@@ -190,10 +224,54 @@ export function SearchResults() {
   const filterContentRef = useRef<HTMLDivElement>(null);
   const [lastScrollPosition, setLastScrollPosition] = useState(0);
 
+  // Custom AccordionTrigger to prevent scroll position reset
+  const CustomAccordionTrigger = ({ className, children, ...props }) => {
+    const handleClick = (e) => {
+      // Store current scroll position immediately on click
+      if (filterContentRef.current) {
+        setLastScrollPosition(filterContentRef.current.scrollTop);
+      }
+    };
+
+    return (
+      <AccordionTrigger
+        className={`md:text-base font-medium py-4 text-lg mobile-large-text accordion-trigger ${className}`}
+        onClick={handleClick}
+        {...props}
+      >
+        {children}
+      </AccordionTrigger>
+    );
+  };
+
   // Save scroll position when options are selected
   useEffect(() => {
     if (filterContentRef.current) {
-      filterContentRef.current.scrollTop = lastScrollPosition;
+      // Store the current scroll position in a variable to prevent any race conditions
+      const currentScrollPos = lastScrollPosition;
+
+      // Use a more aggressive approach with multiple attempts to restore scroll position
+      const restoreScroll = () => {
+        if (filterContentRef.current) {
+          filterContentRef.current.scrollTop = currentScrollPos;
+
+          // Schedule additional attempts to ensure it sticks
+          setTimeout(() => {
+            if (filterContentRef.current) {
+              filterContentRef.current.scrollTop = currentScrollPos;
+            }
+          }, 50);
+
+          setTimeout(() => {
+            if (filterContentRef.current) {
+              filterContentRef.current.scrollTop = currentScrollPos;
+            }
+          }, 150);
+        }
+      };
+
+      restoreScroll();
+      requestAnimationFrame(restoreScroll);
     }
   }, [
     lastScrollPosition,
@@ -217,17 +295,19 @@ export function SearchResults() {
   // Replace the FilterContent component with this updated version that puts all filters in accordions except location
   const FilterContent = () => (
     <div
-      className="space-y-6"
+      className="space-y-6 mobile-large-select"
       ref={filterContentRef}
       onScroll={(e) => setLastScrollPosition(e.currentTarget.scrollTop)}
     >
       {/* Location - Outside accordion as requested */}
       <div className="space-y-4">
-        <h3 className="text-sm md:text-base font-medium">Location</h3>
+        <h3 className="text-sm md:text-base font-medium mobile-large-text">
+          Location
+        </h3>
         <div>
           <label
             htmlFor="location"
-            className="md:text-base text-muted-foreground mb-1 block"
+            className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
           >
             Search Location
           </label>
@@ -237,112 +317,149 @@ export function SearchResults() {
             placeholder="Enter city, state or zip"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            className="mobile-large-input"
           />
         </div>
-        {/* <div>
-          <div className="flex justify-between mb-1">
-            <label htmlFor="radius" className="text-sm text-muted-foreground">
-              Search Radius
-            </label>
-            <span className="text-sm text-muted-foreground">
-              {searchRadius[0]} miles
-            </span>
-          </div>
-          <Slider
-            id="radius"
-            value={searchRadius}
-            min={5}
-            max={100}
-            step={5}
-            onValueChange={(value) => setSearchRadius(value as number[])}
-          />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>5 mi</span>
-            <span>100 mi</span>
-          </div>
-        </div> */}
+        <div>
+          <label
+            htmlFor="radius"
+            className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
+          >
+            Search Radius
+          </label>
+          <Select
+            value={searchRadius[0].toString()}
+            onValueChange={(value) => setSearchRadius([Number.parseInt(value)])}
+          >
+            <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
+              <SelectValue placeholder="Select radius" />
+            </SelectTrigger>
+            <SelectContent className="text-base">
+              <SelectItem value="50" className="py-3">
+                50 km
+              </SelectItem>
+              <SelectItem value="100" className="py-3">
+                100 km
+              </SelectItem>
+              <SelectItem value="200" className="py-3">
+                200 km
+              </SelectItem>
+              <SelectItem value="500" className="py-3">
+                500 km
+              </SelectItem>
+              <SelectItem value="1000" className="py-3">
+                1000 km
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* All other filters in accordions */}
       <Accordion
-        type="multiple"
+        type="single"
         className="w-full"
-        value={openAccordionItems}
-        onValueChange={setOpenAccordionItems}
+        value={openAccordionItems[0]}
+        onValueChange={(value) => setOpenAccordionItems(value ? [value] : [])}
+        collapsible
       >
         {/* Make and Model */}
         <AccordionItem value="vehicle">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Vehicle
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Vehicle</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-3 mt-2">
+            <div className="space-y-4 mt-3">
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Make
                 </label>
                 <Select
                   value={make}
                   onValueChange={(value) => {
                     setMake(value);
-                    if (!openAccordionItems.includes("vehicle")) {
-                      setOpenAccordionItems((prev) => [...prev, "vehicle"]);
-                    }
+                    setOpenAccordionItems(["vehicle"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue placeholder="Any make" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="toyota">Toyota</SelectItem>
-                    <SelectItem value="honda">Honda</SelectItem>
-                    <SelectItem value="ford">Ford</SelectItem>
-                    <SelectItem value="bmw">BMW</SelectItem>
-                    <SelectItem value="mercedes">Mercedes-Benz</SelectItem>
-                    <SelectItem value="audi">Audi</SelectItem>
+                  <SelectContent className="text-base">
+                    <SelectItem value="toyota" className="py-3">
+                      Toyota
+                    </SelectItem>
+                    <SelectItem value="honda" className="py-3">
+                      Honda
+                    </SelectItem>
+                    <SelectItem value="ford" className="py-3">
+                      Ford
+                    </SelectItem>
+                    <SelectItem value="bmw" className="py-3">
+                      BMW
+                    </SelectItem>
+                    <SelectItem value="mercedes" className="py-3">
+                      Mercedes-Benz
+                    </SelectItem>
+                    <SelectItem value="audi" className="py-3">
+                      Audi
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Model
                 </label>
                 <Select
                   value={model}
                   onValueChange={(value) => {
                     setModel(value);
-                    if (!openAccordionItems.includes("vehicle")) {
-                      setOpenAccordionItems((prev) => [...prev, "vehicle"]);
-                    }
+                    setOpenAccordionItems(["vehicle"]);
                   }}
                   disabled={!make}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue
                       placeholder={make ? "Select model" : "Select make first"}
                     />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="text-base">
                     {make === "toyota" && (
                       <>
-                        <SelectItem value="camry">Camry</SelectItem>
-                        <SelectItem value="corolla">Corolla</SelectItem>
-                        <SelectItem value="rav4">RAV4</SelectItem>
+                        <SelectItem value="camry" className="py-3">
+                          Camry
+                        </SelectItem>
+                        <SelectItem value="corolla" className="py-3">
+                          Corolla
+                        </SelectItem>
+                        <SelectItem value="rav4" className="py-3">
+                          RAV4
+                        </SelectItem>
                       </>
                     )}
                     {make === "honda" && (
                       <>
-                        <SelectItem value="civic">Civic</SelectItem>
-                        <SelectItem value="accord">Accord</SelectItem>
-                        <SelectItem value="crv">CR-V</SelectItem>
+                        <SelectItem value="civic" className="py-3">
+                          Civic
+                        </SelectItem>
+                        <SelectItem value="accord" className="py-3">
+                          Accord
+                        </SelectItem>
+                        <SelectItem value="crv" className="py-3">
+                          CR-V
+                        </SelectItem>
                       </>
                     )}
                     {make === "ford" && (
                       <>
-                        <SelectItem value="f150">F-150</SelectItem>
-                        <SelectItem value="mustang">Mustang</SelectItem>
-                        <SelectItem value="escape">Escape</SelectItem>
+                        <SelectItem value="f150" className="py-3">
+                          F-150
+                        </SelectItem>
+                        <SelectItem value="mustang" className="py-3">
+                          Mustang
+                        </SelectItem>
+                        <SelectItem value="escape" className="py-3">
+                          Escape
+                        </SelectItem>
                       </>
                     )}
                     {/* Add more models for other makes as needed */}
@@ -355,43 +472,63 @@ export function SearchResults() {
                 model === "mustang" ||
                 model === "civic") && (
                 <div>
-                  <label className="md:text-base text-muted-foreground mb-1 block">
+                  <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                     Trim
                   </label>
                   <Select
                     value={trim}
                     onValueChange={(value) => {
                       setTrim(value);
-                      if (!openAccordionItems.includes("vehicle")) {
-                        setOpenAccordionItems((prev) => [...prev, "vehicle"]);
-                      }
+                      setOpenAccordionItems(["vehicle"]);
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                       <SelectValue placeholder="Select trim" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="text-base">
                       {model === "f150" && (
                         <>
-                          <SelectItem value="xl">XL</SelectItem>
-                          <SelectItem value="xlt">XLT</SelectItem>
-                          <SelectItem value="lariat">Lariat</SelectItem>
-                          <SelectItem value="platinum">Platinum</SelectItem>
+                          <SelectItem value="xl" className="py-3">
+                            XL
+                          </SelectItem>
+                          <SelectItem value="xlt" className="py-3">
+                            XLT
+                          </SelectItem>
+                          <SelectItem value="lariat" className="py-3">
+                            Lariat
+                          </SelectItem>
+                          <SelectItem value="platinum" className="py-3">
+                            Platinum
+                          </SelectItem>
                         </>
                       )}
                       {model === "mustang" && (
                         <>
-                          <SelectItem value="ecoboost">EcoBoost</SelectItem>
-                          <SelectItem value="gt">GT</SelectItem>
-                          <SelectItem value="mach1">Mach 1</SelectItem>
+                          <SelectItem value="ecoboost" className="py-3">
+                            EcoBoost
+                          </SelectItem>
+                          <SelectItem value="gt" className="py-3">
+                            GT
+                          </SelectItem>
+                          <SelectItem value="mach1" className="py-3">
+                            Mach 1
+                          </SelectItem>
                         </>
                       )}
                       {model === "civic" && (
                         <>
-                          <SelectItem value="lx">LX</SelectItem>
-                          <SelectItem value="ex">EX</SelectItem>
-                          <SelectItem value="sport">Sport</SelectItem>
-                          <SelectItem value="touring">Touring</SelectItem>
+                          <SelectItem value="lx" className="py-3">
+                            LX
+                          </SelectItem>
+                          <SelectItem value="ex" className="py-3">
+                            EX
+                          </SelectItem>
+                          <SelectItem value="sport" className="py-3">
+                            Sport
+                          </SelectItem>
+                          <SelectItem value="touring" className="py-3">
+                            Touring
+                          </SelectItem>
                         </>
                       )}
                     </SelectContent>
@@ -404,31 +541,31 @@ export function SearchResults() {
 
         {/* Year Range */}
         <AccordionItem value="year-range">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Year Range
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Year Range</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   From
                 </label>
                 <Select
                   value={yearRange[0].toString()}
                   onValueChange={(val) => {
                     setYearRange([Number.parseInt(val), yearRange[1]]);
-                    if (!openAccordionItems.includes("year-range")) {
-                      setOpenAccordionItems((prev) => [...prev, "year-range"]);
-                    }
+                    setOpenAccordionItems(["year-range"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="text-base">
                     {Array.from({ length: 26 }, (_, i) => 2000 + i).map(
                       (year) => (
-                        <SelectItem key={year} value={year.toString()}>
+                        <SelectItem
+                          key={year}
+                          value={year.toString()}
+                          className="py-3"
+                        >
                           {year}
                         </SelectItem>
                       )
@@ -437,28 +574,27 @@ export function SearchResults() {
                 </Select>
               </div>
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   To
                 </label>
                 <Select
                   value={yearRange[1].toString()}
                   onValueChange={(val) => {
                     setYearRange([yearRange[0], Number.parseInt(val)]);
-                    if (!openAccordionItems.includes("year-range")) {
-                      setOpenAccordionItems((prev) => [...prev, "year-range"]);
-                    }
+                    setOpenAccordionItems(["year-range"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="text-base">
                     {Array.from({ length: 26 }, (_, i) => 2000 + i).map(
                       (year) => (
                         <SelectItem
                           key={year}
                           value={year.toString()}
                           disabled={year < yearRange[0]}
+                          className="py-3"
                         >
                           {year}
                         </SelectItem>
@@ -473,25 +609,21 @@ export function SearchResults() {
 
         {/* Condition */}
         <AccordionItem value="condition">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Condition
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Condition</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2 mt-2">
+            <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="new"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={condition.includes("new")}
                   onChange={() => {
                     handleConditionChange("new");
-                    if (!openAccordionItems.includes("condition")) {
-                      setOpenAccordionItems((prev) => [...prev, "condition"]);
-                    }
+                    setOpenAccordionItems(["condition"]);
                   }}
                 />
-                <label htmlFor="new" className="md:text-base">
+                <label htmlFor="new" className="text-base mobile-large-text">
                   New
                 </label>
               </div>
@@ -499,16 +631,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="used"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={condition.includes("used")}
                   onChange={() => {
                     handleConditionChange("used");
-                    if (!openAccordionItems.includes("condition")) {
-                      setOpenAccordionItems((prev) => [...prev, "condition"]);
-                    }
+                    setOpenAccordionItems(["condition"]);
                   }}
                 />
-                <label htmlFor="used" className="md:text-base">
+                <label htmlFor="used" className="text-base mobile-large-text">
                   Used
                 </label>
               </div>
@@ -516,16 +646,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="demo"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={condition.includes("demo")}
                   onChange={() => {
                     handleConditionChange("demo");
-                    if (!openAccordionItems.includes("condition")) {
-                      setOpenAccordionItems((prev) => [...prev, "condition"]);
-                    }
+                    setOpenAccordionItems(["condition"]);
                   }}
                 />
-                <label htmlFor="demo" className="md:text-base">
+                <label htmlFor="demo" className="text-base mobile-large-text">
                   Demo
                 </label>
               </div>
@@ -535,20 +663,18 @@ export function SearchResults() {
 
         {/* Price Range */}
         <AccordionItem value="price-range">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Price Range
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Price Range</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
                 <label
                   htmlFor="min-price"
-                  className="md:text-base text-muted-foreground mb-1 block"
+                  className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
                 >
                   Min Price
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">
                     $
                   </span>
                   <Input
@@ -557,14 +683,9 @@ export function SearchResults() {
                     value={minPrice}
                     onChange={(e) => {
                       setMinPrice(e.target.value);
-                      if (!openAccordionItems.includes("price-range")) {
-                        setOpenAccordionItems((prev) => [
-                          ...prev,
-                          "price-range",
-                        ]);
-                      }
+                      setOpenAccordionItems(["price-range"]);
                     }}
-                    className="pl-7"
+                    className="pl-7 mobile-large-input"
                     min="0"
                   />
                 </div>
@@ -572,12 +693,12 @@ export function SearchResults() {
               <div>
                 <label
                   htmlFor="max-price"
-                  className="md:text-base text-muted-foreground mb-1 block"
+                  className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
                 >
                   Max Price
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">
                     $
                   </span>
                   <Input
@@ -586,14 +707,9 @@ export function SearchResults() {
                     value={maxPrice}
                     onChange={(e) => {
                       setMaxPrice(e.target.value);
-                      if (!openAccordionItems.includes("price-range")) {
-                        setOpenAccordionItems((prev) => [
-                          ...prev,
-                          "price-range",
-                        ]);
-                      }
+                      setOpenAccordionItems(["price-range"]);
                     }}
-                    className="pl-7"
+                    className="pl-7 mobile-large-input"
                     min="0"
                   />
                 </div>
@@ -604,13 +720,11 @@ export function SearchResults() {
 
         {/* Mileage Range */}
         <AccordionItem value="mileage-range">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Mileage Range
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Mileage Range</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Min Mileage
                 </label>
                 <Input
@@ -621,18 +735,14 @@ export function SearchResults() {
                       Number.parseInt(e.target.value) || 0,
                       mileageRange[1],
                     ]);
-                    if (!openAccordionItems.includes("mileage-range")) {
-                      setOpenAccordionItems((prev) => [
-                        ...prev,
-                        "mileage-range",
-                      ]);
-                    }
+                    setOpenAccordionItems(["mileage-range"]);
                   }}
                   min="0"
+                  className="mobile-large-input"
                 />
               </div>
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Max Mileage
                 </label>
                 <Input
@@ -643,14 +753,10 @@ export function SearchResults() {
                       mileageRange[0],
                       Number.parseInt(e.target.value) || 0,
                     ]);
-                    if (!openAccordionItems.includes("mileage-range")) {
-                      setOpenAccordionItems((prev) => [
-                        ...prev,
-                        "mileage-range",
-                      ]);
-                    }
+                    setOpenAccordionItems(["mileage-range"]);
                   }}
                   min="0"
+                  className="mobile-large-input"
                 />
               </div>
             </div>
@@ -659,25 +765,21 @@ export function SearchResults() {
 
         {/* Drivetrain */}
         <AccordionItem value="drivetrain">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Drivetrain
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Drivetrain</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2 mt-2">
+            <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="front"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("front")}
                   onChange={() => {
                     handleDrivetrainChange("front");
-                    if (!openAccordionItems.includes("drivetrain")) {
-                      setOpenAccordionItems((prev) => [...prev, "drivetrain"]);
-                    }
+                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="front" className="md:text-base">
+                <label htmlFor="front" className="text-base mobile-large-text">
                   Front-wheel drive
                 </label>
               </div>
@@ -685,16 +787,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="rear"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("rear")}
                   onChange={() => {
                     handleDrivetrainChange("rear");
-                    if (!openAccordionItems.includes("drivetrain")) {
-                      setOpenAccordionItems((prev) => [...prev, "drivetrain"]);
-                    }
+                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="rear" className="md:text-base">
+                <label htmlFor="rear" className="text-base mobile-large-text">
                   Rear-wheel drive
                 </label>
               </div>
@@ -702,16 +802,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="4x4"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("4x4")}
                   onChange={() => {
                     handleDrivetrainChange("4x4");
-                    if (!openAccordionItems.includes("drivetrain")) {
-                      setOpenAccordionItems((prev) => [...prev, "drivetrain"]);
-                    }
+                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="4x4" className="md:text-base">
+                <label htmlFor="4x4" className="text-base mobile-large-text">
                   4x4
                 </label>
               </div>
@@ -719,16 +817,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="awd"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("awd")}
                   onChange={() => {
                     handleDrivetrainChange("awd");
-                    if (!openAccordionItems.includes("drivetrain")) {
-                      setOpenAccordionItems((prev) => [...prev, "drivetrain"]);
-                    }
+                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="awd" className="md:text-base">
+                <label htmlFor="awd" className="text-base mobile-large-text">
                   All-wheel drive
                 </label>
               </div>
@@ -738,28 +834,21 @@ export function SearchResults() {
 
         {/* Transmission */}
         <AccordionItem value="transmission">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Transmission
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Transmission</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2 mt-2">
+            <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="auto"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={transmission.includes("auto")}
                   onChange={() => {
                     handleTransmissionChange("auto");
-                    if (!openAccordionItems.includes("transmission")) {
-                      setOpenAccordionItems((prev) => [
-                        ...prev,
-                        "transmission",
-                      ]);
-                    }
+                    setOpenAccordionItems(["transmission"]);
                   }}
                 />
-                <label htmlFor="auto" className="md:text-base">
+                <label htmlFor="auto" className="text-base mobile-large-text">
                   Automatic
                 </label>
               </div>
@@ -767,19 +856,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="manual"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={transmission.includes("manual")}
                   onChange={() => {
                     handleTransmissionChange("manual");
-                    if (!openAccordionItems.includes("transmission")) {
-                      setOpenAccordionItems((prev) => [
-                        ...prev,
-                        "transmission",
-                      ]);
-                    }
+                    setOpenAccordionItems(["transmission"]);
                   }}
                 />
-                <label htmlFor="manual" className="md:text-base">
+                <label htmlFor="manual" className="text-base mobile-large-text">
                   Manual
                 </label>
               </div>
@@ -787,19 +871,17 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="semi-auto"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={transmission.includes("semi-auto")}
                   onChange={() => {
                     handleTransmissionChange("semi-auto");
-                    if (!openAccordionItems.includes("transmission")) {
-                      setOpenAccordionItems((prev) => [
-                        ...prev,
-                        "transmission",
-                      ]);
-                    }
+                    setOpenAccordionItems(["transmission"]);
                   }}
                 />
-                <label htmlFor="semi-auto" className="md:text-base">
+                <label
+                  htmlFor="semi-auto"
+                  className="text-base mobile-large-text"
+                >
                   Semi-Automatic
                 </label>
               </div>
@@ -809,25 +891,21 @@ export function SearchResults() {
 
         {/* Fuel Type */}
         <AccordionItem value="fuel-type">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Fuel type
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Fuel type</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-2 mt-2">
+            <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="petrol"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("petrol")}
                   onChange={() => {
                     handleFuelTypeChange("petrol");
-                    if (!openAccordionItems.includes("fuel-type")) {
-                      setOpenAccordionItems((prev) => [...prev, "fuel-type"]);
-                    }
+                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="petrol" className="md:text-base">
+                <label htmlFor="petrol" className="text-base mobile-large-text">
                   Petrol
                 </label>
               </div>
@@ -835,16 +913,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="diesel"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("diesel")}
                   onChange={() => {
                     handleFuelTypeChange("diesel");
-                    if (!openAccordionItems.includes("fuel-type")) {
-                      setOpenAccordionItems((prev) => [...prev, "fuel-type"]);
-                    }
+                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="diesel" className="md:text-base">
+                <label htmlFor="diesel" className="text-base mobile-large-text">
                   Diesel
                 </label>
               </div>
@@ -852,16 +928,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="hybrid"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("hybrid")}
                   onChange={() => {
                     handleFuelTypeChange("hybrid");
-                    if (!openAccordionItems.includes("fuel-type")) {
-                      setOpenAccordionItems((prev) => [...prev, "fuel-type"]);
-                    }
+                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="hybrid" className="md:text-base">
+                <label htmlFor="hybrid" className="text-base mobile-large-text">
                   Hybrid
                 </label>
               </div>
@@ -869,16 +943,17 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="electric"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("electric")}
                   onChange={() => {
                     handleFuelTypeChange("electric");
-                    if (!openAccordionItems.includes("fuel-type")) {
-                      setOpenAccordionItems((prev) => [...prev, "fuel-type"]);
-                    }
+                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="electric" className="md:text-base">
+                <label
+                  htmlFor="electric"
+                  className="text-base mobile-large-text"
+                >
                   Electric
                 </label>
               </div>
@@ -886,16 +961,14 @@ export function SearchResults() {
                 <input
                   type="checkbox"
                   id="lpg"
-                  className="mr-2 h-4 w-4"
+                  className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("lpg")}
                   onChange={() => {
                     handleFuelTypeChange("lpg");
-                    if (!openAccordionItems.includes("fuel-type")) {
-                      setOpenAccordionItems((prev) => [...prev, "fuel-type"]);
-                    }
+                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="lpg" className="md:text-base">
+                <label htmlFor="lpg" className="text-base mobile-large-text">
                   LPG
                 </label>
               </div>
@@ -905,61 +978,79 @@ export function SearchResults() {
 
         {/* Engine */}
         <AccordionItem value="engine">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Engine
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Engine</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-4 mt-2">
+            <div className="space-y-4 mt-3">
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Engine Size
                 </label>
                 <Select
                   value={engineSize}
                   onValueChange={(value) => {
                     setEngineSize(value);
-                    if (!openAccordionItems.includes("engine")) {
-                      setOpenAccordionItems((prev) => [...prev, "engine"]);
-                    }
+                    setOpenAccordionItems(["engine"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue placeholder="Any size" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="upto1000">Up to 1000cc</SelectItem>
-                    <SelectItem value="upto1500">Up to 1500cc</SelectItem>
-                    <SelectItem value="upto2000">Up to 2000cc</SelectItem>
-                    <SelectItem value="upto2500">Up to 2500cc</SelectItem>
-                    <SelectItem value="upto3000">Up to 3000cc</SelectItem>
-                    <SelectItem value="above3000">Above 3000cc</SelectItem>
+                  <SelectContent className="text-base">
+                    <SelectItem value="upto1000" className="py-3">
+                      Up to 1000cc
+                    </SelectItem>
+                    <SelectItem value="upto1500" className="py-3">
+                      Up to 1500cc
+                    </SelectItem>
+                    <SelectItem value="upto2000" className="py-3">
+                      Up to 2000cc
+                    </SelectItem>
+                    <SelectItem value="upto2500" className="py-3">
+                      Up to 2500cc
+                    </SelectItem>
+                    <SelectItem value="upto3000" className="py-3">
+                      Up to 3000cc
+                    </SelectItem>
+                    <SelectItem value="above3000" className="py-3">
+                      Above 3000cc
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Horsepower
                 </label>
                 <Select
                   value={horsepower}
                   onValueChange={(value) => {
                     setHorsepower(value);
-                    if (!openAccordionItems.includes("engine")) {
-                      setOpenAccordionItems((prev) => [...prev, "engine"]);
-                    }
+                    setOpenAccordionItems(["engine"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue placeholder="Any horsepower" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="upto100">Up to 100 HP</SelectItem>
-                    <SelectItem value="upto150">Up to 150 HP</SelectItem>
-                    <SelectItem value="upto200">Up to 200 HP</SelectItem>
-                    <SelectItem value="upto250">Up to 250 HP</SelectItem>
-                    <SelectItem value="upto300">Up to 300 HP</SelectItem>
-                    <SelectItem value="above300">Above 300 HP</SelectItem>
+                  <SelectContent className="text-base">
+                    <SelectItem value="upto100" className="py-3">
+                      Up to 100 HP
+                    </SelectItem>
+                    <SelectItem value="upto150" className="py-3">
+                      Up to 150 HP
+                    </SelectItem>
+                    <SelectItem value="upto200" className="py-3">
+                      Up to 200 HP
+                    </SelectItem>
+                    <SelectItem value="upto250" className="py-3">
+                      Up to 250 HP
+                    </SelectItem>
+                    <SelectItem value="upto300" className="py-3">
+                      Up to 300 HP
+                    </SelectItem>
+                    <SelectItem value="above300" className="py-3">
+                      Above 300 HP
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -969,82 +1060,92 @@ export function SearchResults() {
 
         {/* Vehicle History */}
         <AccordionItem value="history">
-          <AccordionTrigger className="md:text-base font-medium py-2">
-            Vehicle History
-          </AccordionTrigger>
+          <CustomAccordionTrigger>Vehicle History</CustomAccordionTrigger>
           <AccordionContent>
-            <div className="space-y-4 mt-2">
+            <div className="space-y-4 mt-3">
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Accident History
                 </label>
                 <Select
                   value={accident}
                   onValueChange={(value) => {
                     setAccident(value);
-                    if (!openAccordionItems.includes("history")) {
-                      setOpenAccordionItems((prev) => [...prev, "history"]);
-                    }
+                    setOpenAccordionItems(["history"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="no">No Accidents</SelectItem>
-                    <SelectItem value="yes">Has Accident History</SelectItem>
-                    <SelectItem value="any">Any</SelectItem>
+                  <SelectContent className="text-base">
+                    <SelectItem value="no" className="py-3">
+                      No Accidents
+                    </SelectItem>
+                    <SelectItem value="yes" className="py-3">
+                      Has Accident History
+                    </SelectItem>
+                    <SelectItem value="any" className="py-3">
+                      Any
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Service History
                 </label>
                 <Select
                   value={serviceHistory}
                   onValueChange={(value) => {
                     setServiceHistory(value);
-                    if (!openAccordionItems.includes("history")) {
-                      setOpenAccordionItems((prev) => [...prev, "history"]);
-                    }
+                    setOpenAccordionItems(["history"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="full">Full Service History</SelectItem>
-                    <SelectItem value="partial">
+                  <SelectContent className="text-base">
+                    <SelectItem value="full" className="py-3">
+                      Full Service History
+                    </SelectItem>
+                    <SelectItem value="partial" className="py-3">
                       Partial Service History
                     </SelectItem>
-                    <SelectItem value="none">No Service History</SelectItem>
-                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="none" className="py-3">
+                      No Service History
+                    </SelectItem>
+                    <SelectItem value="any" className="py-3">
+                      Any
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="md:text-base text-muted-foreground mb-1 block">
+                <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Registration Status
                 </label>
                 <Select
                   value={registered}
                   onValueChange={(value) => {
                     setRegistered(value);
-                    if (!openAccordionItems.includes("history")) {
-                      setOpenAccordionItems((prev) => [...prev, "history"]);
-                    }
+                    setOpenAccordionItems(["history"]);
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="registered">Registered</SelectItem>
-                    <SelectItem value="unregistered">Not Registered</SelectItem>
-                    <SelectItem value="any">Any</SelectItem>
+                  <SelectContent className="text-base">
+                    <SelectItem value="registered" className="py-3">
+                      Registered
+                    </SelectItem>
+                    <SelectItem value="unregistered" className="py-3">
+                      Not Registered
+                    </SelectItem>
+                    <SelectItem value="any" className="py-3">
+                      Any
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1100,7 +1201,7 @@ export function SearchResults() {
         <Button
           variant="outline"
           onClick={toggleMobileFilters}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-base py-2 px-4"
         >
           Filters
           <ChevronUp
@@ -1110,7 +1211,7 @@ export function SearchResults() {
         </Button>
         <div className="flex items-center gap-2">
           <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger className="w-[120px] h-9">
+            <SelectTrigger className="w-[120px] h-10">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -1124,7 +1225,7 @@ export function SearchResults() {
             variant={viewMode === "grid" ? "default" : "outline"}
             size="icon"
             onClick={() => setViewMode("grid")}
-            className="h-9 w-9"
+            className="h-10 w-10"
           >
             <LayoutGrid size={18} />
           </Button>
@@ -1132,7 +1233,7 @@ export function SearchResults() {
             variant={viewMode === "list" ? "default" : "outline"}
             size="icon"
             onClick={() => setViewMode("list")}
-            className="h-9 w-9"
+            className="h-10 w-10"
           >
             <LayoutList size={18} />
           </Button>
@@ -1145,14 +1246,14 @@ export function SearchResults() {
           <DialogHeader className="sticky top-0 z-10 bg-white p-6 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DialogTitle className="text-base md:text-lg">
+                <DialogTitle className="text-lg md:text-xl">
                   Filters
                 </DialogTitle>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  className="h-8 px-2"
+                  className="h-9 px-3 text-base"
                 >
                   Reset
                 </Button>
@@ -1162,7 +1263,7 @@ export function SearchResults() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setMobileFiltersOpen(false)}
-                className="h-8 px-2"
+                className="h-9 px-3 text-base"
               >
                 X
               </Button>
@@ -1175,9 +1276,9 @@ export function SearchResults() {
           </div>
 
           {/* Sticky footer with apply button */}
-          <div className="sticky bottom-0 z-10 bg-white p-4 border-t mt-auto">
+          <div className="sticky -bottom-[270px] z-10 bg-white p-4 border-t mt-auto">
             <Button
-              className="w-full bg-blue-600 text-white"
+              className="w-full bg-blue-600 text-white text-lg py-6"
               onClick={() => {
                 // This will trigger a re-render with the current filter values
                 setCurrentPage(1); // Reset to first page when filters are applied
