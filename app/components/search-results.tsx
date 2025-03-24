@@ -332,22 +332,22 @@ export function SearchResults() {
             onValueChange={(value) => setSearchRadius([Number.parseInt(value)])}
           >
             <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-              <SelectValue placeholder="Select radius" />
+              <SelectValue placeholder="Select radius" className="" />
             </SelectTrigger>
-            <SelectContent className="text-base">
-              <SelectItem value="50" className="py-3">
+            <SelectContent className="text-lg">
+              <SelectItem value="50" className="py-3 text-lg">
                 50 km
               </SelectItem>
-              <SelectItem value="100" className="py-3">
+              <SelectItem value="100" className="py-3 text-lg ">
                 100 km
               </SelectItem>
-              <SelectItem value="200" className="py-3">
+              <SelectItem value="200" className="py-3 text-lg">
                 200 km
               </SelectItem>
-              <SelectItem value="500" className="py-3">
+              <SelectItem value="500" className="py-3 text-lg">
                 500 km
               </SelectItem>
-              <SelectItem value="1000" className="py-3">
+              <SelectItem value="1000" className="py-3 text-lg">
                 1000 km
               </SelectItem>
             </SelectContent>
@@ -383,22 +383,22 @@ export function SearchResults() {
                     <SelectValue placeholder="Any make" />
                   </SelectTrigger>
                   <SelectContent className="text-base">
-                    <SelectItem value="toyota" className="py-3">
+                    <SelectItem value="toyota" className="py-3 text-lg">
                       Toyota
                     </SelectItem>
-                    <SelectItem value="honda" className="py-3">
+                    <SelectItem value="honda" className="py-3 text-lg   ">
                       Honda
                     </SelectItem>
-                    <SelectItem value="ford" className="py-3">
+                    <SelectItem value="ford" className="py-3 text-lg">
                       Ford
                     </SelectItem>
-                    <SelectItem value="bmw" className="py-3">
+                    <SelectItem value="bmw" className="py-3  text-lg">
                       BMW
                     </SelectItem>
-                    <SelectItem value="mercedes" className="py-3">
+                    <SelectItem value="mercedes" className="py-3 text-lg">
                       Mercedes-Benz
                     </SelectItem>
-                    <SelectItem value="audi" className="py-3">
+                    <SelectItem value="audi" className="py-3 text-lg">
                       Audi
                     </SelectItem>
                   </SelectContent>
@@ -425,39 +425,39 @@ export function SearchResults() {
                   <SelectContent className="text-base">
                     {make === "toyota" && (
                       <>
-                        <SelectItem value="camry" className="py-3">
+                        <SelectItem value="camry" className="py-3 text-lg">
                           Camry
                         </SelectItem>
-                        <SelectItem value="corolla" className="py-3">
+                        <SelectItem value="corolla" className="py-3 text-lg ">
                           Corolla
                         </SelectItem>
-                        <SelectItem value="rav4" className="py-3">
+                        <SelectItem value="rav4" className="py-3 text-lg">
                           RAV4
                         </SelectItem>
                       </>
                     )}
                     {make === "honda" && (
                       <>
-                        <SelectItem value="civic" className="py-3">
+                        <SelectItem value="civic" className="py-3 text-lg">
                           Civic
                         </SelectItem>
-                        <SelectItem value="accord" className="py-3">
+                        <SelectItem value="accord" className="py-3 text-lg">
                           Accord
                         </SelectItem>
-                        <SelectItem value="crv" className="py-3">
+                        <SelectItem value="crv" className="py-3 text-lg">
                           CR-V
                         </SelectItem>
                       </>
                     )}
                     {make === "ford" && (
                       <>
-                        <SelectItem value="f150" className="py-3">
+                        <SelectItem value="f150" className="py-3 text-lg">
                           F-150
                         </SelectItem>
-                        <SelectItem value="mustang" className="py-3">
+                        <SelectItem value="mustang" className="py-3 text-lg">
                           Mustang
                         </SelectItem>
-                        <SelectItem value="escape" className="py-3">
+                        <SelectItem value="escape" className="py-3 text-lg">
                           Escape
                         </SelectItem>
                       </>
@@ -488,45 +488,45 @@ export function SearchResults() {
                     <SelectContent className="text-base">
                       {model === "f150" && (
                         <>
-                          <SelectItem value="xl" className="py-3">
+                          <SelectItem value="xl" className="py-3 text-lg">
                             XL
                           </SelectItem>
-                          <SelectItem value="xlt" className="py-3">
+                          <SelectItem value="xlt" className="py-3 text-lg">
                             XLT
                           </SelectItem>
-                          <SelectItem value="lariat" className="py-3">
+                          <SelectItem value="lariat" className="py-3 text-lg">
                             Lariat
                           </SelectItem>
-                          <SelectItem value="platinum" className="py-3">
+                          <SelectItem value="platinum" className="py-3 text-lg">
                             Platinum
                           </SelectItem>
                         </>
                       )}
                       {model === "mustang" && (
                         <>
-                          <SelectItem value="ecoboost" className="py-3">
+                          <SelectItem value="ecoboost" className="py-3 text-lg">
                             EcoBoost
                           </SelectItem>
-                          <SelectItem value="gt" className="py-3">
+                          <SelectItem value="gt" className="py-3 text-lg">
                             GT
                           </SelectItem>
-                          <SelectItem value="mach1" className="py-3">
+                          <SelectItem value="mach1" className="py-3 text-lg">
                             Mach 1
                           </SelectItem>
                         </>
                       )}
                       {model === "civic" && (
                         <>
-                          <SelectItem value="lx" className="py-3">
+                          <SelectItem value="lx" className="py-3 text-lg">
                             LX
                           </SelectItem>
-                          <SelectItem value="ex" className="py-3">
+                          <SelectItem value="ex" className="py-3 text-lg  ">
                             EX
                           </SelectItem>
-                          <SelectItem value="sport" className="py-3">
+                          <SelectItem value="sport" className="py-3 text-lg">
                             Sport
                           </SelectItem>
-                          <SelectItem value="touring" className="py-3">
+                          <SelectItem value="touring" className="py-3 text-lg">
                             Touring
                           </SelectItem>
                         </>
@@ -996,22 +996,22 @@ export function SearchResults() {
                     <SelectValue placeholder="Any size" />
                   </SelectTrigger>
                   <SelectContent className="text-base">
-                    <SelectItem value="upto1000" className="py-3">
+                    <SelectItem value="upto1000" className="py-3 text-lg">
                       Up to 1000cc
                     </SelectItem>
-                    <SelectItem value="upto1500" className="py-3">
+                    <SelectItem value="upto1500" className="py-3 text-lg">
                       Up to 1500cc
                     </SelectItem>
-                    <SelectItem value="upto2000" className="py-3">
+                    <SelectItem value="upto2000" className="py-3 text-lg">
                       Up to 2000cc
                     </SelectItem>
-                    <SelectItem value="upto2500" className="py-3">
+                    <SelectItem value="upto2500" className="py-3 text-lg">
                       Up to 2500cc
                     </SelectItem>
-                    <SelectItem value="upto3000" className="py-3">
+                    <SelectItem value="upto3000" className="py-3 text-lg">
                       Up to 3000cc
                     </SelectItem>
-                    <SelectItem value="above3000" className="py-3">
+                    <SelectItem value="above3000" className="py-3 text-lg">
                       Above 3000cc
                     </SelectItem>
                   </SelectContent>
@@ -1033,22 +1033,22 @@ export function SearchResults() {
                     <SelectValue placeholder="Any horsepower" />
                   </SelectTrigger>
                   <SelectContent className="text-base">
-                    <SelectItem value="upto100" className="py-3">
+                    <SelectItem value="upto100" className="py-3 text-lg">
                       Up to 100 HP
                     </SelectItem>
-                    <SelectItem value="upto150" className="py-3">
+                    <SelectItem value="upto150" className="py-3 text-lg">
                       Up to 150 HP
                     </SelectItem>
-                    <SelectItem value="upto200" className="py-3">
+                    <SelectItem value="upto200" className="py-3 text-lg">
                       Up to 200 HP
                     </SelectItem>
-                    <SelectItem value="upto250" className="py-3">
+                    <SelectItem value="upto250" className="py-3 text-lg">
                       Up to 250 HP
                     </SelectItem>
-                    <SelectItem value="upto300" className="py-3">
+                    <SelectItem value="upto300" className="py-3 text-lg">
                       Up to 300 HP
                     </SelectItem>
-                    <SelectItem value="above300" className="py-3">
+                    <SelectItem value="above300" className="py-3 text-lg">
                       Above 300 HP
                     </SelectItem>
                   </SelectContent>
@@ -1078,13 +1078,13 @@ export function SearchResults() {
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
                   <SelectContent className="text-base">
-                    <SelectItem value="no" className="py-3">
+                    <SelectItem value="no" className="py-3 text-lg">
                       No Accidents
                     </SelectItem>
-                    <SelectItem value="yes" className="py-3">
+                    <SelectItem value="yes" className="py-3 text-lg">
                       Has Accident History
                     </SelectItem>
-                    <SelectItem value="any" className="py-3">
+                    <SelectItem value="any" className="py-3 text-lg">
                       Any
                     </SelectItem>
                   </SelectContent>
@@ -1106,16 +1106,16 @@ export function SearchResults() {
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
                   <SelectContent className="text-base">
-                    <SelectItem value="full" className="py-3">
+                    <SelectItem value="full" className="py-3 text-lg">
                       Full Service History
                     </SelectItem>
-                    <SelectItem value="partial" className="py-3">
+                    <SelectItem value="partial" className="py-3 text-lg">
                       Partial Service History
                     </SelectItem>
-                    <SelectItem value="none" className="py-3">
+                    <SelectItem value="none" className="py-3 text-lg">
                       No Service History
                     </SelectItem>
-                    <SelectItem value="any" className="py-3">
+                    <SelectItem value="any" className="py-3 text-lg">
                       Any
                     </SelectItem>
                   </SelectContent>
@@ -1137,13 +1137,13 @@ export function SearchResults() {
                     <SelectValue placeholder="Any" />
                   </SelectTrigger>
                   <SelectContent className="text-base">
-                    <SelectItem value="registered" className="py-3">
+                    <SelectItem value="registered" className="py-3 text-lg">
                       Registered
                     </SelectItem>
-                    <SelectItem value="unregistered" className="py-3">
+                    <SelectItem value="unregistered" className="py-3 text-lg  ">
                       Not Registered
                     </SelectItem>
-                    <SelectItem value="any" className="py-3">
+                    <SelectItem value="any" className="py-3 text-lg">
                       Any
                     </SelectItem>
                   </SelectContent>
