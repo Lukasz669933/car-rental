@@ -86,7 +86,7 @@ const drawerStyles = `
     top: 0;
     left: 0;
     height: 100vh;
-    width: 85%;
+    width: 100%;
     max-width: 425px;
     background: white;
     z-index: 50;
