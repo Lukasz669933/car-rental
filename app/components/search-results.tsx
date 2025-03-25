@@ -1249,7 +1249,7 @@ export function SearchResults() {
             className={mobileFiltersOpen ? "" : "rotate-180"}
           />
         </Button>
-        <div className="flex items-center bg-black justify-between gap-2">
+        <div className="flex items-center  justify-between gap-2">
           <Select value={sortOption} onValueChange={setSortOption}>
             <SelectTrigger className="w-[120px] h-10">
               <SelectValue placeholder="Sort by" />
