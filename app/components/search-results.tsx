@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, LayoutList, ChevronUp, ArrowLeft } from "lucide-react";
+import { LayoutGrid, LayoutList, ChevronUp, ArrowLeft, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -76,6 +76,45 @@ const scrollbarHideStyles = `
       font-size: 1.25rem !important;
       padding: 1rem 0 !important;
     }
+  }
+`;
+
+// Add these styles at the top of the file after imports
+const drawerStyles = `
+  .drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 85%;
+    max-width: 425px;
+    background: white;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .drawer.open {
+    transform: translateX(0);
+  }
+
+  .drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .drawer-overlay.open {
+    opacity: 1;
+    visibility: visible;
   }
 `;
 
@@ -1160,6 +1199,7 @@ export function SearchResults() {
     <div className="container mx-auto px-4">
       <style jsx global>{`
         ${scrollbarHideStyles}
+        ${drawerStyles}
       `}</style>
       {/* <Header /> */}
       {/* Hero Section */}
@@ -1191,7 +1231,7 @@ export function SearchResults() {
         </Button>
         <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
           <h1 className="text-xl md:text-5xl md:w-[55%] font-bold ">
-            Find your dream car easily with advanced search filters.{" "}
+            Find your dream car easily with advanced search filters.
           </h1>
         </div>
       </section>
@@ -1209,7 +1249,7 @@ export function SearchResults() {
             className={mobileFiltersOpen ? "" : "rotate-180"}
           />
         </Button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center bg-black justify-between gap-2">
           <Select value={sortOption} onValueChange={setSortOption}>
             <SelectTrigger className="w-[120px] h-10">
               <SelectValue placeholder="Sort by" />
@@ -1221,75 +1261,79 @@ export function SearchResults() {
               <SelectItem value="newest">Newest First</SelectItem>
             </SelectContent>
           </Select>
-          <Button
-            variant={viewMode === "grid" ? "default" : "outline"}
-            size="icon"
-            onClick={() => setViewMode("grid")}
-            className="h-10 w-10"
-          >
-            <LayoutGrid size={18} />
-          </Button>
-          <Button
-            variant={viewMode === "list" ? "default" : "outline"}
-            size="icon"
-            onClick={() => setViewMode("list")}
-            className="h-10 w-10"
-          >
-            <LayoutList size={18} />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setViewMode("grid")}
+              className="h-10 w-10 md:block hidden"
+            >
+              <LayoutGrid size={18} />
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setViewMode("list")}
+              className="h-10 w-10 md:block hidden"
+            >
+              <LayoutList size={18} />
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile filters modal */}
-      <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
-        <DialogContent className="sm:max-w-[425px] w-[90%] h-[80vh] p-0 bg-white flex flex-col">
-          <DialogHeader className="sticky top-0 z-10 bg-white p-6 border-b">
+      {/* Mobile filters drawer */}
+      <div className="lg:hidden">
+        <div
+          className={`drawer-overlay ${mobileFiltersOpen ? "open" : ""}`}
+          onClick={() => setMobileFiltersOpen(false)}
+        />
+        <div className={`drawer ${mobileFiltersOpen ? "open" : ""}`}>
+          <div className="sticky top-0 z-10 bg-white p-6 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DialogTitle className="text-lg md:text-xl">
-                  Filters
-                </DialogTitle>
+                <h2 className="text-xl font-bold">Filters</h2>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  className="h-9 px-3 text-base"
+                  className="h-8 px-2"
                 >
                   Reset
                 </Button>
               </div>
-
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={() => setMobileFiltersOpen(false)}
-                className="h-9 px-3 text-base"
+                className="h-8 w-8"
               >
-                X
+                <X size={20} />
               </Button>
             </div>
-          </DialogHeader>
+          </div>
 
           {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
-            <FilterContent />
+          <div className="h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide">
+            <div className="p-6">
+              <FilterContent />
+            </div>
           </div>
 
           {/* Sticky footer with apply button */}
-          <div className="sticky -bottom-[270px] z-10 bg-white p-4 border-t mt-auto">
+          <div className="sticky bottom-0 z-10 bg-white p-4 border-t">
             <Button
               className="w-full bg-blue-600 text-white text-lg py-6"
               onClick={() => {
-                // This will trigger a re-render with the current filter values
-                setCurrentPage(1); // Reset to first page when filters are applied
-                setMobileFiltersOpen(false); // Close mobile filters modal
+                setCurrentPage(1);
+                setMobileFiltersOpen(false);
               }}
             >
               Apply Filters
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8 py-6">
         {/* Desktop filters sidebar */}
