@@ -331,7 +331,39 @@ export function SearchResults() {
     registered,
   ]);
 
-  // Replace the FilterContent component with this updated version that puts all filters in accordions except location
+  // Replace custom Select with native select
+  const NativeSelect = ({
+    value,
+    onValueChange,
+    placeholder,
+    options,
+    disabled = false,
+    className = "",
+  }) => {
+    return (
+      <select
+        value={value}
+        onChange={(e) => onValueChange(e.target.value)}
+        disabled={disabled}
+        className={`w-full border rounded-md px-3 py-2 mobile-large-input ${className}`}
+      >
+        <option value="" disabled={value !== ""}>
+          {placeholder}
+        </option>
+        {options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+            disabled={option.disabled}
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+    );
+  };
+
+  // Replace in FilterContent component
   const FilterContent = () => (
     <div
       className="space-y-6 mobile-large-select"
@@ -366,31 +398,18 @@ export function SearchResults() {
           >
             Search Radius
           </label>
-          <Select
+          <NativeSelect
             value={searchRadius[0].toString()}
             onValueChange={(value) => setSearchRadius([Number.parseInt(value)])}
-          >
-            <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-              <SelectValue placeholder="Select radius" className="" />
-            </SelectTrigger>
-            <SelectContent className="text-lg">
-              <SelectItem value="50" className="py-3 text-lg">
-                50 km
-              </SelectItem>
-              <SelectItem value="100" className="py-3 text-lg ">
-                100 km
-              </SelectItem>
-              <SelectItem value="200" className="py-3 text-lg">
-                200 km
-              </SelectItem>
-              <SelectItem value="500" className="py-3 text-lg">
-                500 km
-              </SelectItem>
-              <SelectItem value="1000" className="py-3 text-lg">
-                1000 km
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select radius"
+            options={[
+              { value: "50", label: "50 km" },
+              { value: "100", label: "100 km" },
+              { value: "200", label: "200 km" },
+              { value: "500", label: "500 km" },
+              { value: "1000", label: "1000 km" },
+            ]}
+          />
         </div>
       </div>
 
@@ -404,106 +423,65 @@ export function SearchResults() {
       >
         {/* Make and Model */}
         <AccordionItem value="vehicle">
-          <CustomAccordionTrigger>Vehicle</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">Vehicle</CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Make
                 </label>
-                <Select
+                <NativeSelect
                   value={make}
                   onValueChange={(value) => {
                     setMake(value);
                     setOpenAccordionItems(["vehicle"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue placeholder="Any make" />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    <SelectItem value="toyota" className="py-3 text-lg">
-                      Toyota
-                    </SelectItem>
-                    <SelectItem value="honda" className="py-3 text-lg   ">
-                      Honda
-                    </SelectItem>
-                    <SelectItem value="ford" className="py-3 text-lg">
-                      Ford
-                    </SelectItem>
-                    <SelectItem value="bmw" className="py-3  text-lg">
-                      BMW
-                    </SelectItem>
-                    <SelectItem value="mercedes" className="py-3 text-lg">
-                      Mercedes-Benz
-                    </SelectItem>
-                    <SelectItem value="audi" className="py-3 text-lg">
-                      Audi
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Any make"
+                  options={[
+                    { value: "toyota", label: "Toyota" },
+                    { value: "honda", label: "Honda" },
+                    { value: "ford", label: "Ford" },
+                    { value: "bmw", label: "BMW" },
+                    { value: "mercedes", label: "Mercedes-Benz" },
+                    { value: "audi", label: "Audi" },
+                  ]}
+                />
               </div>
 
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Model
                 </label>
-                <Select
+                <NativeSelect
                   value={model}
                   onValueChange={(value) => {
                     setModel(value);
                     setOpenAccordionItems(["vehicle"]);
                   }}
                   disabled={!make}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue
-                      placeholder={make ? "Select model" : "Select make first"}
-                    />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    {make === "toyota" && (
-                      <>
-                        <SelectItem value="camry" className="py-3 text-lg">
-                          Camry
-                        </SelectItem>
-                        <SelectItem value="corolla" className="py-3 text-lg ">
-                          Corolla
-                        </SelectItem>
-                        <SelectItem value="rav4" className="py-3 text-lg">
-                          RAV4
-                        </SelectItem>
-                      </>
-                    )}
-                    {make === "honda" && (
-                      <>
-                        <SelectItem value="civic" className="py-3 text-lg">
-                          Civic
-                        </SelectItem>
-                        <SelectItem value="accord" className="py-3 text-lg">
-                          Accord
-                        </SelectItem>
-                        <SelectItem value="crv" className="py-3 text-lg">
-                          CR-V
-                        </SelectItem>
-                      </>
-                    )}
-                    {make === "ford" && (
-                      <>
-                        <SelectItem value="f150" className="py-3 text-lg">
-                          F-150
-                        </SelectItem>
-                        <SelectItem value="mustang" className="py-3 text-lg">
-                          Mustang
-                        </SelectItem>
-                        <SelectItem value="escape" className="py-3 text-lg">
-                          Escape
-                        </SelectItem>
-                      </>
-                    )}
-                    {/* Add more models for other makes as needed */}
-                  </SelectContent>
-                </Select>
+                  placeholder={make ? "Select model" : "Select make first"}
+                  options={
+                    make === "toyota"
+                      ? [
+                          { value: "camry", label: "Camry" },
+                          { value: "corolla", label: "Corolla" },
+                          { value: "rav4", label: "RAV4" },
+                        ]
+                      : make === "honda"
+                      ? [
+                          { value: "civic", label: "Civic" },
+                          { value: "accord", label: "Accord" },
+                          { value: "crv", label: "CR-V" },
+                        ]
+                      : make === "ford"
+                      ? [
+                          { value: "f150", label: "F-150" },
+                          { value: "mustang", label: "Mustang" },
+                          { value: "escape", label: "Escape" },
+                        ]
+                      : []
+                  }
+                />
               </div>
 
               {/* Only show trim for models that have trim options */}
@@ -514,64 +492,37 @@ export function SearchResults() {
                   <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                     Trim
                   </label>
-                  <Select
+                  <NativeSelect
                     value={trim}
                     onValueChange={(value) => {
                       setTrim(value);
                       setOpenAccordionItems(["vehicle"]);
                     }}
-                  >
-                    <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                      <SelectValue placeholder="Select trim" />
-                    </SelectTrigger>
-                    <SelectContent className="text-base">
-                      {model === "f150" && (
-                        <>
-                          <SelectItem value="xl" className="py-3 text-lg">
-                            XL
-                          </SelectItem>
-                          <SelectItem value="xlt" className="py-3 text-lg">
-                            XLT
-                          </SelectItem>
-                          <SelectItem value="lariat" className="py-3 text-lg">
-                            Lariat
-                          </SelectItem>
-                          <SelectItem value="platinum" className="py-3 text-lg">
-                            Platinum
-                          </SelectItem>
-                        </>
-                      )}
-                      {model === "mustang" && (
-                        <>
-                          <SelectItem value="ecoboost" className="py-3 text-lg">
-                            EcoBoost
-                          </SelectItem>
-                          <SelectItem value="gt" className="py-3 text-lg">
-                            GT
-                          </SelectItem>
-                          <SelectItem value="mach1" className="py-3 text-lg">
-                            Mach 1
-                          </SelectItem>
-                        </>
-                      )}
-                      {model === "civic" && (
-                        <>
-                          <SelectItem value="lx" className="py-3 text-lg">
-                            LX
-                          </SelectItem>
-                          <SelectItem value="ex" className="py-3 text-lg  ">
-                            EX
-                          </SelectItem>
-                          <SelectItem value="sport" className="py-3 text-lg">
-                            Sport
-                          </SelectItem>
-                          <SelectItem value="touring" className="py-3 text-lg">
-                            Touring
-                          </SelectItem>
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select trim"
+                    options={
+                      model === "f150"
+                        ? [
+                            { value: "xl", label: "XL" },
+                            { value: "xlt", label: "XLT" },
+                            { value: "lariat", label: "Lariat" },
+                            { value: "platinum", label: "Platinum" },
+                          ]
+                        : model === "mustang"
+                        ? [
+                            { value: "ecoboost", label: "EcoBoost" },
+                            { value: "gt", label: "GT" },
+                            { value: "mach1", label: "Mach 1" },
+                          ]
+                        : model === "civic"
+                        ? [
+                            { value: "lx", label: "LX" },
+                            { value: "ex", label: "EX" },
+                            { value: "sport", label: "Sport" },
+                            { value: "touring", label: "Touring" },
+                          ]
+                        : []
+                    }
+                  />
                 </div>
               )}
             </div>
@@ -580,67 +531,49 @@ export function SearchResults() {
 
         {/* Year Range */}
         <AccordionItem value="year-range">
-          <CustomAccordionTrigger>Year Range</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Year Range
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   From
                 </label>
-                <Select
+                <NativeSelect
                   value={yearRange[0].toString()}
                   onValueChange={(val) => {
                     setYearRange([Number.parseInt(val), yearRange[1]]);
                     setOpenAccordionItems(["year-range"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    {Array.from({ length: 26 }, (_, i) => 2000 + i).map(
-                      (year) => (
-                        <SelectItem
-                          key={year}
-                          value={year.toString()}
-                          className="py-3"
-                        >
-                          {year}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
+                  placeholder="Select year"
+                  options={Array.from({ length: 26 }, (_, i) => 2000 + i).map(
+                    (year) => ({
+                      value: year.toString(),
+                      label: year.toString(),
+                    })
+                  )}
+                />
               </div>
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   To
                 </label>
-                <Select
+                <NativeSelect
                   value={yearRange[1].toString()}
                   onValueChange={(val) => {
                     setYearRange([yearRange[0], Number.parseInt(val)]);
                     setOpenAccordionItems(["year-range"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    {Array.from({ length: 26 }, (_, i) => 2000 + i).map(
-                      (year) => (
-                        <SelectItem
-                          key={year}
-                          value={year.toString()}
-                          disabled={year < yearRange[0]}
-                          className="py-3"
-                        >
-                          {year}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
+                  placeholder="Select year"
+                  options={Array.from({ length: 26 }, (_, i) => 2000 + i).map(
+                    (year) => ({
+                      value: year.toString(),
+                      label: year.toString(),
+                      disabled: year < yearRange[0],
+                    })
+                  )}
+                />
               </div>
             </div>
           </AccordionContent>
@@ -648,7 +581,9 @@ export function SearchResults() {
 
         {/* Condition */}
         <AccordionItem value="condition">
-          <CustomAccordionTrigger>Condition</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Condition
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
@@ -702,7 +637,9 @@ export function SearchResults() {
 
         {/* Price Range */}
         <AccordionItem value="price-range">
-          <CustomAccordionTrigger>Price Range</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Price Range
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
@@ -759,7 +696,9 @@ export function SearchResults() {
 
         {/* Mileage Range */}
         <AccordionItem value="mileage-range">
-          <CustomAccordionTrigger>Mileage Range</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Mileage Range
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
@@ -804,7 +743,9 @@ export function SearchResults() {
 
         {/* Drivetrain */}
         <AccordionItem value="drivetrain">
-          <CustomAccordionTrigger>Drivetrain</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Drivetrain
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
@@ -873,7 +814,9 @@ export function SearchResults() {
 
         {/* Transmission */}
         <AccordionItem value="transmission">
-          <CustomAccordionTrigger>Transmission</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Transmission
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
@@ -930,7 +873,9 @@ export function SearchResults() {
 
         {/* Fuel Type */}
         <AccordionItem value="fuel-type">
-          <CustomAccordionTrigger>Fuel type</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Fuel type
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
@@ -1017,81 +962,51 @@ export function SearchResults() {
 
         {/* Engine */}
         <AccordionItem value="engine">
-          <CustomAccordionTrigger>Engine</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">Engine</CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Engine Size
                 </label>
-                <Select
+                <NativeSelect
                   value={engineSize}
                   onValueChange={(value) => {
                     setEngineSize(value);
                     setOpenAccordionItems(["engine"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue placeholder="Any size" />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    <SelectItem value="upto1000" className="py-3 text-lg">
-                      Up to 1000cc
-                    </SelectItem>
-                    <SelectItem value="upto1500" className="py-3 text-lg">
-                      Up to 1500cc
-                    </SelectItem>
-                    <SelectItem value="upto2000" className="py-3 text-lg">
-                      Up to 2000cc
-                    </SelectItem>
-                    <SelectItem value="upto2500" className="py-3 text-lg">
-                      Up to 2500cc
-                    </SelectItem>
-                    <SelectItem value="upto3000" className="py-3 text-lg">
-                      Up to 3000cc
-                    </SelectItem>
-                    <SelectItem value="above3000" className="py-3 text-lg">
-                      Above 3000cc
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Any size"
+                  options={[
+                    { value: "upto1000", label: "Up to 1000cc" },
+                    { value: "upto1500", label: "Up to 1500cc" },
+                    { value: "upto2000", label: "Up to 2000cc" },
+                    { value: "upto2500", label: "Up to 2500cc" },
+                    { value: "upto3000", label: "Up to 3000cc" },
+                    { value: "above3000", label: "Above 3000cc" },
+                  ]}
+                />
               </div>
 
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Horsepower
                 </label>
-                <Select
+                <NativeSelect
                   value={horsepower}
                   onValueChange={(value) => {
                     setHorsepower(value);
                     setOpenAccordionItems(["engine"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue placeholder="Any horsepower" />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    <SelectItem value="upto100" className="py-3 text-lg">
-                      Up to 100 HP
-                    </SelectItem>
-                    <SelectItem value="upto150" className="py-3 text-lg">
-                      Up to 150 HP
-                    </SelectItem>
-                    <SelectItem value="upto200" className="py-3 text-lg">
-                      Up to 200 HP
-                    </SelectItem>
-                    <SelectItem value="upto250" className="py-3 text-lg">
-                      Up to 250 HP
-                    </SelectItem>
-                    <SelectItem value="upto300" className="py-3 text-lg">
-                      Up to 300 HP
-                    </SelectItem>
-                    <SelectItem value="above300" className="py-3 text-lg">
-                      Above 300 HP
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Any horsepower"
+                  options={[
+                    { value: "upto100", label: "Up to 100 HP" },
+                    { value: "upto150", label: "Up to 150 HP" },
+                    { value: "upto200", label: "Up to 200 HP" },
+                    { value: "upto250", label: "Up to 250 HP" },
+                    { value: "upto300", label: "Up to 300 HP" },
+                    { value: "above300", label: "Above 300 HP" },
+                  ]}
+                />
               </div>
             </div>
           </AccordionContent>
@@ -1099,94 +1014,67 @@ export function SearchResults() {
 
         {/* Vehicle History */}
         <AccordionItem value="history">
-          <CustomAccordionTrigger>Vehicle History</CustomAccordionTrigger>
+          <CustomAccordionTrigger className="">
+            Vehicle History
+          </CustomAccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Accident History
                 </label>
-                <Select
+                <NativeSelect
                   value={accident}
                   onValueChange={(value) => {
                     setAccident(value);
                     setOpenAccordionItems(["history"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    <SelectItem value="no" className="py-3 text-lg">
-                      No Accidents
-                    </SelectItem>
-                    <SelectItem value="yes" className="py-3 text-lg">
-                      Has Accident History
-                    </SelectItem>
-                    <SelectItem value="any" className="py-3 text-lg">
-                      Any
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Any"
+                  options={[
+                    { value: "no", label: "No Accidents" },
+                    { value: "yes", label: "Has Accident History" },
+                    { value: "any", label: "Any" },
+                  ]}
+                />
               </div>
 
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Service History
                 </label>
-                <Select
+                <NativeSelect
                   value={serviceHistory}
                   onValueChange={(value) => {
                     setServiceHistory(value);
                     setOpenAccordionItems(["history"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    <SelectItem value="full" className="py-3 text-lg">
-                      Full Service History
-                    </SelectItem>
-                    <SelectItem value="partial" className="py-3 text-lg">
-                      Partial Service History
-                    </SelectItem>
-                    <SelectItem value="none" className="py-3 text-lg">
-                      No Service History
-                    </SelectItem>
-                    <SelectItem value="any" className="py-3 text-lg">
-                      Any
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Any"
+                  options={[
+                    { value: "full", label: "Full Service History" },
+                    { value: "partial", label: "Partial Service History" },
+                    { value: "none", label: "No Service History" },
+                    { value: "any", label: "Any" },
+                  ]}
+                />
               </div>
 
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
                   Registration Status
                 </label>
-                <Select
+                <NativeSelect
                   value={registered}
                   onValueChange={(value) => {
                     setRegistered(value);
                     setOpenAccordionItems(["history"]);
                   }}
-                >
-                  <SelectTrigger className="w-full text-base py-3 min-h-[3rem]">
-                    <SelectValue placeholder="Any" />
-                  </SelectTrigger>
-                  <SelectContent className="text-base">
-                    <SelectItem value="registered" className="py-3 text-lg">
-                      Registered
-                    </SelectItem>
-                    <SelectItem value="unregistered" className="py-3 text-lg  ">
-                      Not Registered
-                    </SelectItem>
-                    <SelectItem value="any" className="py-3 text-lg">
-                      Any
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Any"
+                  options={[
+                    { value: "registered", label: "Registered" },
+                    { value: "unregistered", label: "Not Registered" },
+                    { value: "any", label: "Any" },
+                  ]}
+                />
               </div>
             </div>
           </AccordionContent>
@@ -1249,18 +1137,18 @@ export function SearchResults() {
             className={mobileFiltersOpen ? "" : "rotate-180"}
           />
         </Button>
-        <div className="flex items-center  justify-between gap-2">
-          <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger className="w-[120px] h-10">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="relevance">Relevance</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="newest">Newest First</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex items-center justify-between gap-2">
+          <NativeSelect
+            value={sortOption}
+            onValueChange={setSortOption}
+            options={[
+              { value: "relevance", label: "Relevance" },
+              { value: "price-low", label: "Price: Low to High" },
+              { value: "price-high", label: "Price: High to Low" },
+              { value: "newest", label: "Newest First" },
+            ]}
+            className="w-[130px]"
+          />
           <div className="flex items-center gap-2">
             <Button
               variant={viewMode === "grid" ? "default" : "outline"}
@@ -1396,21 +1284,17 @@ export function SearchResults() {
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Sort by:</span>
-                <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="relevance">Relevance</SelectItem>
-                    <SelectItem value="price-low">
-                      Price: Low to High
-                    </SelectItem>
-                    <SelectItem value="price-high">
-                      Price: High to Low
-                    </SelectItem>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                  </SelectContent>
-                </Select>
+                <NativeSelect
+                  value={sortOption}
+                  onValueChange={setSortOption}
+                  options={[
+                    { value: "relevance", label: "Relevance" },
+                    { value: "price-low", label: "Price: Low to High" },
+                    { value: "price-high", label: "Price: High to Low" },
+                    { value: "newest", label: "Newest First" },
+                  ]}
+                  className="w-[180px]"
+                />
               </div>
             </div>
 
