@@ -71,6 +71,15 @@ const scrollbarHideStyles = `
       font-size: 1.25rem;
     }
 
+    /* Style for native selects on mobile */
+    .mobile-select {
+      min-height: 3.5rem;
+      font-size: 1.25rem;
+      padding: 0.75rem 1rem;
+      background-position: right 0.75rem center;
+      background-size: 1.5rem;
+    }
+
     /* Make accordion triggers larger */
     .accordion-trigger {
       font-size: 1.25rem !important;
@@ -268,7 +277,14 @@ export function SearchResults() {
     const handleClick = (e) => {
       // Store current scroll position immediately on click
       if (filterContentRef.current) {
-        setLastScrollPosition(filterContentRef.current.scrollTop);
+        // Save the current position plus a small offset to account for the accordion expansion
+        const currentPosition = filterContentRef.current.scrollTop;
+        setLastScrollPosition(currentPosition);
+
+        // Cancel any existing scroll restoration timeouts
+        if (window._scrollRestoreTimeout) {
+          clearTimeout(window._scrollRestoreTimeout);
+        }
       }
     };
 
@@ -283,34 +299,41 @@ export function SearchResults() {
     );
   };
 
-  // Save scroll position when options are selected
+  // Enhance the scroll position restoration to be more robust
   useEffect(() => {
     if (filterContentRef.current) {
       // Store the current scroll position in a variable to prevent any race conditions
       const currentScrollPos = lastScrollPosition;
 
-      // Use a more aggressive approach with multiple attempts to restore scroll position
+      // Create a more robust approach to restoring scroll position
       const restoreScroll = () => {
         if (filterContentRef.current) {
-          filterContentRef.current.scrollTop = currentScrollPos;
-
-          // Schedule additional attempts to ensure it sticks
-          setTimeout(() => {
+          // Allow the DOM to update first
+          window._scrollRestoreTimeout = setTimeout(() => {
             if (filterContentRef.current) {
               filterContentRef.current.scrollTop = currentScrollPos;
-            }
-          }, 50);
 
-          setTimeout(() => {
-            if (filterContentRef.current) {
-              filterContentRef.current.scrollTop = currentScrollPos;
+              // Schedule another attempt after a short delay
+              window._scrollRestoreTimeout = setTimeout(() => {
+                if (filterContentRef.current) {
+                  filterContentRef.current.scrollTop = currentScrollPos;
+                }
+              }, 50);
             }
-          }, 150);
+          }, 10);
         }
       };
 
-      restoreScroll();
-      requestAnimationFrame(restoreScroll);
+      // Wait for DOM updates before attempting to restore scroll position
+      requestAnimationFrame(() => {
+        requestAnimationFrame(restoreScroll);
+      });
+
+      return () => {
+        if (window._scrollRestoreTimeout) {
+          clearTimeout(window._scrollRestoreTimeout);
+        }
+      };
     }
   }, [
     lastScrollPosition,
@@ -345,7 +368,9 @@ export function SearchResults() {
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
         disabled={disabled}
-        className={`w-full border rounded-md px-3 py-2 mobile-large-input ${className}`}
+        className={`w-full border rounded-md px-3 py-2 text-base md:py-2 
+          mobile-select ${className}`}
+        style={{ height: "auto" }}
       >
         <option value="" disabled={value !== ""}>
           {placeholder}
@@ -370,50 +395,7 @@ export function SearchResults() {
       ref={filterContentRef}
       onScroll={(e) => setLastScrollPosition(e.currentTarget.scrollTop)}
     >
-      {/* Location - Outside accordion as requested */}
-      <div className="space-y-4">
-        <h3 className="text-sm md:text-base font-medium mobile-large-text">
-          Location
-        </h3>
-        <div>
-          <label
-            htmlFor="location"
-            className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
-          >
-            Search Location
-          </label>
-          <Input
-            id="location"
-            type="text"
-            placeholder="Enter city, state or zip"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="mobile-large-input"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="radius"
-            className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
-          >
-            Search Radius
-          </label>
-          <NativeSelect
-            value={searchRadius[0].toString()}
-            onValueChange={(value) => setSearchRadius([Number.parseInt(value)])}
-            placeholder="Select radius"
-            options={[
-              { value: "50", label: "50 km" },
-              { value: "100", label: "100 km" },
-              { value: "200", label: "200 km" },
-              { value: "500", label: "500 km" },
-              { value: "1000", label: "1000 km" },
-            ]}
-          />
-        </div>
-      </div>
-
-      {/* All other filters in accordions */}
+      {/* All filters in accordions */}
       <Accordion
         type="single"
         className="w-full"
@@ -421,6 +403,57 @@ export function SearchResults() {
         onValueChange={(value) => setOpenAccordionItems(value ? [value] : [])}
         collapsible
       >
+        {/* Location */}
+        <AccordionItem value="location">
+          <CustomAccordionTrigger className="">Location</CustomAccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-4 mt-3">
+              <div>
+                <label
+                  htmlFor="location"
+                  className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
+                >
+                  Search Location
+                </label>
+                <Input
+                  id="location"
+                  type="text"
+                  placeholder="Enter city, state or zip"
+                  value={location}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    setOpenAccordionItems(["location"]);
+                  }}
+                  className="mobile-large-input"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="radius"
+                  className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
+                >
+                  Search Radius
+                </label>
+                <NativeSelect
+                  value={searchRadius[0].toString()}
+                  onValueChange={(value) => {
+                    setSearchRadius([Number.parseInt(value)]);
+                    setOpenAccordionItems(["location"]);
+                  }}
+                  placeholder="Select radius"
+                  options={[
+                    { value: "50", label: "50 km" },
+                    { value: "100", label: "100 km" },
+                    { value: "200", label: "200 km" },
+                    { value: "500", label: "500 km" },
+                    { value: "1000", label: "1000 km" },
+                  ]}
+                />
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
         {/* Make and Model */}
         <AccordionItem value="vehicle">
           <CustomAccordionTrigger className="">Vehicle</CustomAccordionTrigger>
@@ -849,7 +882,7 @@ export function SearchResults() {
                   Manual
                 </label>
               </div>
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="semi-auto"
@@ -866,7 +899,7 @@ export function SearchResults() {
                 >
                   Semi-Automatic
                 </label>
-              </div>
+              </div> */}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -1141,6 +1174,7 @@ export function SearchResults() {
           <NativeSelect
             value={sortOption}
             onValueChange={setSortOption}
+            placeholder="Sort by"
             options={[
               { value: "relevance", label: "Relevance" },
               { value: "price-low", label: "Price: Low to High" },
@@ -1287,6 +1321,7 @@ export function SearchResults() {
                 <NativeSelect
                   value={sortOption}
                   onValueChange={setSortOption}
+                  placeholder="Sort by"
                   options={[
                     { value: "relevance", label: "Relevance" },
                     { value: "price-low", label: "Price: Low to High" },
