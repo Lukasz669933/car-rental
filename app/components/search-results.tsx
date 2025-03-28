@@ -3,31 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, LayoutList, ChevronUp, ArrowLeft, X } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import CarCard from "./car-card";
 import { CARS } from "@/lib/data";
 import Image from "next/image";
 import { Footer } from "./footer";
 import { useRouter } from "next/navigation";
+import { CustomAccordion } from "./custom-accordion";
 
 // Custom utility for hiding scrollbars while maintaining scroll functionality
 const scrollbarHideStyles = `
@@ -151,7 +133,9 @@ export function SearchResults() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Track open accordion items
-  const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([]);
+  const [openAccordionItem, setOpenAccordionItem] = useState<string | null>(
+    "location"
+  );
 
   // Add these new state variables after the existing state declarations (around line 70)
   const [make, setMake] = useState("");
@@ -175,6 +159,12 @@ export function SearchResults() {
   let indexOfLastItem = currentPage * itemsPerPage;
   let indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
+  // Refs for desktop and mobile filter containers
+  const desktopFilterContentRef = useRef<HTMLDivElement>(null);
+  const mobileFilterContentRef = useRef<HTMLDivElement>(null);
+  const [desktopScrollPosition, setDesktopScrollPosition] = useState(0);
+  const [mobileScrollPosition, setMobileScrollPosition] = useState(0);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -189,6 +179,12 @@ export function SearchResults() {
 
   const toggleMobileFilters = () => {
     setMobileFiltersOpen(!mobileFiltersOpen);
+    // Toggle body scroll lock
+    if (!mobileFiltersOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
   };
 
   const handleTransmissionChange = (value: string) => {
@@ -225,8 +221,16 @@ export function SearchResults() {
   };
 
   // Handle accordion toggle
-  const handleAccordionToggle = (value: string) => {
-    setOpenAccordionItems((prev) => (prev.includes(value) ? [] : [value]));
+  const toggleAccordion = (value: string) => {
+    setOpenAccordionItem(openAccordionItem === value ? null : value);
+
+    // Save current scroll position before toggling
+    if (desktopFilterContentRef.current) {
+      setDesktopScrollPosition(desktopFilterContentRef.current.scrollTop);
+    }
+    if (mobileFilterContentRef.current) {
+      setMobileScrollPosition(mobileFilterContentRef.current.scrollTop);
+    }
   };
 
   // Update the clearFilters function to include the new filters (around line 120)
@@ -268,91 +272,42 @@ export function SearchResults() {
   indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Add this before the FilterContent component
-  const filterContentRef = useRef<HTMLDivElement>(null);
-  const [lastScrollPosition, setLastScrollPosition] = useState(0);
-
-  // Custom AccordionTrigger to prevent scroll position reset
-  const CustomAccordionTrigger = ({ className, children, ...props }) => {
-    const handleClick = (e) => {
-      // Store current scroll position immediately on click
-      if (filterContentRef.current) {
-        // Save the current position plus a small offset to account for the accordion expansion
-        const currentPosition = filterContentRef.current.scrollTop;
-        setLastScrollPosition(currentPosition);
-
-        // Cancel any existing scroll restoration timeouts
-        if (window._scrollRestoreTimeout) {
-          clearTimeout(window._scrollRestoreTimeout);
-        }
-      }
-    };
-
-    return (
-      <AccordionTrigger
-        className={`md:text-base font-medium py-4 text-lg mobile-large-text accordion-trigger ${className}`}
-        onClick={handleClick}
-        {...props}
-      >
-        {children}
-      </AccordionTrigger>
-    );
-  };
-
-  // Enhance the scroll position restoration to be more robust
+  // Restore scroll position after accordion changes
   useEffect(() => {
-    if (filterContentRef.current) {
-      // Store the current scroll position in a variable to prevent any race conditions
-      const currentScrollPos = lastScrollPosition;
-
-      // Create a more robust approach to restoring scroll position
-      const restoreScroll = () => {
-        if (filterContentRef.current) {
-          // Allow the DOM to update first
-          window._scrollRestoreTimeout = setTimeout(() => {
-            if (filterContentRef.current) {
-              filterContentRef.current.scrollTop = currentScrollPos;
-
-              // Schedule another attempt after a short delay
-              window._scrollRestoreTimeout = setTimeout(() => {
-                if (filterContentRef.current) {
-                  filterContentRef.current.scrollTop = currentScrollPos;
-                }
-              }, 50);
-            }
-          }, 10);
+    // For desktop
+    if (desktopFilterContentRef.current) {
+      const restoreDesktopScroll = () => {
+        if (desktopFilterContentRef.current) {
+          desktopFilterContentRef.current.scrollTop = desktopScrollPosition;
         }
       };
 
-      // Wait for DOM updates before attempting to restore scroll position
+      // Use requestAnimationFrame for smoother transitions
       requestAnimationFrame(() => {
-        requestAnimationFrame(restoreScroll);
+        requestAnimationFrame(restoreDesktopScroll);
       });
+    }
 
-      return () => {
-        if (window._scrollRestoreTimeout) {
-          clearTimeout(window._scrollRestoreTimeout);
+    // For mobile
+    if (mobileFilterContentRef.current) {
+      const restoreMobileScroll = () => {
+        if (mobileFilterContentRef.current) {
+          mobileFilterContentRef.current.scrollTop = mobileScrollPosition;
         }
       };
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(restoreMobileScroll);
+      });
     }
-  }, [
-    lastScrollPosition,
-    openAccordionItems,
-    make,
-    model,
-    trim,
-    yearRange,
-    condition,
-    mileageRange,
-    drivetrain,
-    transmission,
-    fuelType,
-    engineSize,
-    horsepower,
-    accident,
-    serviceHistory,
-    registered,
-  ]);
+  }, [desktopScrollPosition, mobileScrollPosition, openAccordionItem]);
+
+  useEffect(() => {
+    return () => {
+      // Ensure body scroll is re-enabled when component unmounts
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   // Replace custom Select with native select
   const NativeSelect = ({
@@ -369,7 +324,7 @@ export function SearchResults() {
         onChange={(e) => onValueChange(e.target.value)}
         disabled={disabled}
         className={`w-full border rounded-md px-3 py-2 text-base md:py-2 
-          mobile-select ${className}`}
+           ${className}`}
         style={{ height: "auto" }}
       >
         <option value="" disabled={value !== ""}>
@@ -388,48 +343,49 @@ export function SearchResults() {
     );
   };
 
-  // Replace in FilterContent component
-  const FilterContent = () => (
-    <div
-      className="space-y-6 mobile-large-select"
-      ref={filterContentRef}
-      onScroll={(e) => setLastScrollPosition(e.currentTarget.scrollTop)}
-    >
-      {/* All filters in accordions */}
-      <Accordion
-        type="single"
-        className="w-full"
-        value={openAccordionItems[0]}
-        onValueChange={(value) => setOpenAccordionItems(value ? [value] : [])}
-        collapsible
+  // Create separate filter content components for desktop and mobile
+  const createFilterContent = (isMobile: boolean) => {
+    const ref = isMobile ? mobileFilterContentRef : desktopFilterContentRef;
+    const setScrollPosition = isMobile
+      ? setMobileScrollPosition
+      : setDesktopScrollPosition;
+
+    return (
+      <div
+        className="space-y-6 mobile-large-select"
+        ref={ref}
+        onScroll={(e) => setScrollPosition(e.currentTarget.scrollTop)}
       >
-        {/* Location */}
-        <AccordionItem value="location">
-          <CustomAccordionTrigger className="">Location</CustomAccordionTrigger>
-          <AccordionContent>
+        {/* All filters in accordions */}
+        <div className="w-full">
+          {/* Location */}
+          <CustomAccordion
+            title="Location"
+            isOpen={openAccordionItem === "location"}
+            onToggle={() => toggleAccordion("location")}
+          >
             <div className="space-y-4 mt-3">
               <div>
                 <label
-                  htmlFor="location"
+                  htmlFor={`location-${isMobile ? "mobile" : "desktop"}`}
                   className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
                 >
                   Search Location
                 </label>
                 <Input
-                  id="location"
+                  id={`location-${isMobile ? "mobile" : "desktop"}`}
                   type="text"
                   placeholder="Enter city, state or zip"
                   value={location}
                   onChange={(e) => {
                     setLocation(e.target.value);
-                    setOpenAccordionItems(["location"]);
                   }}
                   className="mobile-large-input"
                 />
               </div>
               <div>
                 <label
-                  htmlFor="radius"
+                  htmlFor={`radius-${isMobile ? "mobile" : "desktop"}`}
                   className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
                 >
                   Search Radius
@@ -438,7 +394,6 @@ export function SearchResults() {
                   value={searchRadius[0].toString()}
                   onValueChange={(value) => {
                     setSearchRadius([Number.parseInt(value)]);
-                    setOpenAccordionItems(["location"]);
                   }}
                   placeholder="Select radius"
                   options={[
@@ -451,13 +406,14 @@ export function SearchResults() {
                 />
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Make and Model */}
-        <AccordionItem value="vehicle">
-          <CustomAccordionTrigger className="">Vehicle</CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Make and Model */}
+          <CustomAccordion
+            title="Vehicle"
+            isOpen={openAccordionItem === "vehicle"}
+            onToggle={() => toggleAccordion("vehicle")}
+          >
             <div className="space-y-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
@@ -467,7 +423,6 @@ export function SearchResults() {
                   value={make}
                   onValueChange={(value) => {
                     setMake(value);
-                    setOpenAccordionItems(["vehicle"]);
                   }}
                   placeholder="Any make"
                   options={[
@@ -489,7 +444,6 @@ export function SearchResults() {
                   value={model}
                   onValueChange={(value) => {
                     setModel(value);
-                    setOpenAccordionItems(["vehicle"]);
                   }}
                   disabled={!make}
                   placeholder={make ? "Select model" : "Select make first"}
@@ -529,7 +483,6 @@ export function SearchResults() {
                     value={trim}
                     onValueChange={(value) => {
                       setTrim(value);
-                      setOpenAccordionItems(["vehicle"]);
                     }}
                     placeholder="Select trim"
                     options={
@@ -559,15 +512,14 @@ export function SearchResults() {
                 </div>
               )}
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Year Range */}
-        <AccordionItem value="year-range">
-          <CustomAccordionTrigger className="">
-            Year Range
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Year Range */}
+          <CustomAccordion
+            title="Year Range"
+            isOpen={openAccordionItem === "year-range"}
+            onToggle={() => toggleAccordion("year-range")}
+          >
             <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
@@ -577,7 +529,6 @@ export function SearchResults() {
                   value={yearRange[0].toString()}
                   onValueChange={(val) => {
                     setYearRange([Number.parseInt(val), yearRange[1]]);
-                    setOpenAccordionItems(["year-range"]);
                   }}
                   placeholder="Select year"
                   options={Array.from({ length: 26 }, (_, i) => 2000 + i).map(
@@ -596,7 +547,6 @@ export function SearchResults() {
                   value={yearRange[1].toString()}
                   onValueChange={(val) => {
                     setYearRange([yearRange[0], Number.parseInt(val)]);
-                    setOpenAccordionItems(["year-range"]);
                   }}
                   placeholder="Select year"
                   options={Array.from({ length: 26 }, (_, i) => 2000 + i).map(
@@ -609,75 +559,79 @@ export function SearchResults() {
                 />
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Condition */}
-        <AccordionItem value="condition">
-          <CustomAccordionTrigger className="">
-            Condition
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Condition */}
+          <CustomAccordion
+            title="Condition"
+            isOpen={openAccordionItem === "condition"}
+            onToggle={() => toggleAccordion("condition")}
+          >
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="new"
+                  id={`new-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={condition.includes("new")}
                   onChange={() => {
                     handleConditionChange("new");
-                    setOpenAccordionItems(["condition"]);
                   }}
                 />
-                <label htmlFor="new" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`new-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   New
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="used"
+                  id={`used-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={condition.includes("used")}
                   onChange={() => {
                     handleConditionChange("used");
-                    setOpenAccordionItems(["condition"]);
                   }}
                 />
-                <label htmlFor="used" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`used-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Used
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="demo"
+                  id={`demo-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={condition.includes("demo")}
                   onChange={() => {
                     handleConditionChange("demo");
-                    setOpenAccordionItems(["condition"]);
                   }}
                 />
-                <label htmlFor="demo" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`demo-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Demo
                 </label>
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Price Range */}
-        <AccordionItem value="price-range">
-          <CustomAccordionTrigger className="">
-            Price Range
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Price Range */}
+          <CustomAccordion
+            title="Price Range"
+            isOpen={openAccordionItem === "price-range"}
+            onToggle={() => toggleAccordion("price-range")}
+          >
             <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
                 <label
-                  htmlFor="min-price"
+                  htmlFor={`min-price-${isMobile ? "mobile" : "desktop"}`}
                   className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
                 >
                   Min Price
@@ -687,12 +641,11 @@ export function SearchResults() {
                     $
                   </span>
                   <Input
-                    id="min-price"
+                    id={`min-price-${isMobile ? "mobile" : "desktop"}`}
                     type="number"
                     value={minPrice}
                     onChange={(e) => {
                       setMinPrice(e.target.value);
-                      setOpenAccordionItems(["price-range"]);
                     }}
                     className="pl-7 mobile-large-input"
                     min="0"
@@ -701,7 +654,7 @@ export function SearchResults() {
               </div>
               <div>
                 <label
-                  htmlFor="max-price"
+                  htmlFor={`max-price-${isMobile ? "mobile" : "desktop"}`}
                   className="md:text-base text-muted-foreground mb-2 block mobile-large-text"
                 >
                   Max Price
@@ -711,12 +664,11 @@ export function SearchResults() {
                     $
                   </span>
                   <Input
-                    id="max-price"
+                    id={`max-price-${isMobile ? "mobile" : "desktop"}`}
                     type="number"
                     value={maxPrice}
                     onChange={(e) => {
                       setMaxPrice(e.target.value);
-                      setOpenAccordionItems(["price-range"]);
                     }}
                     className="pl-7 mobile-large-input"
                     min="0"
@@ -724,15 +676,14 @@ export function SearchResults() {
                 </div>
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Mileage Range */}
-        <AccordionItem value="mileage-range">
-          <CustomAccordionTrigger className="">
-            Mileage Range
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Mileage Range */}
+          <CustomAccordion
+            title="Mileage Range"
+            isOpen={openAccordionItem === "mileage-range"}
+            onToggle={() => toggleAccordion("mileage-range")}
+          >
             <div className="grid grid-cols-2 gap-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
@@ -746,7 +697,6 @@ export function SearchResults() {
                       Number.parseInt(e.target.value) || 0,
                       mileageRange[1],
                     ]);
-                    setOpenAccordionItems(["mileage-range"]);
                   }}
                   min="0"
                   className="mobile-large-input"
@@ -764,211 +714,206 @@ export function SearchResults() {
                       mileageRange[0],
                       Number.parseInt(e.target.value) || 0,
                     ]);
-                    setOpenAccordionItems(["mileage-range"]);
                   }}
                   min="0"
                   className="mobile-large-input"
                 />
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Drivetrain */}
-        <AccordionItem value="drivetrain">
-          <CustomAccordionTrigger className="">
-            Drivetrain
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Drivetrain */}
+          <CustomAccordion
+            title="Drivetrain"
+            isOpen={openAccordionItem === "drivetrain"}
+            onToggle={() => toggleAccordion("drivetrain")}
+          >
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="front"
+                  id={`front-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("front")}
                   onChange={() => {
                     handleDrivetrainChange("front");
-                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="front" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`front-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Front-wheel drive
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="rear"
+                  id={`rear-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("rear")}
                   onChange={() => {
                     handleDrivetrainChange("rear");
-                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="rear" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`rear-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Rear-wheel drive
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="4x4"
+                  id={`4x4-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("4x4")}
                   onChange={() => {
                     handleDrivetrainChange("4x4");
-                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="4x4" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`4x4-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   4x4
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="awd"
+                  id={`awd-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={drivetrain.includes("awd")}
                   onChange={() => {
                     handleDrivetrainChange("awd");
-                    setOpenAccordionItems(["drivetrain"]);
                   }}
                 />
-                <label htmlFor="awd" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`awd-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   All-wheel drive
                 </label>
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Transmission */}
-        <AccordionItem value="transmission">
-          <CustomAccordionTrigger className="">
-            Transmission
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Transmission */}
+          <CustomAccordion
+            title="Transmission"
+            isOpen={openAccordionItem === "transmission"}
+            onToggle={() => toggleAccordion("transmission")}
+          >
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="auto"
+                  id={`auto-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={transmission.includes("auto")}
                   onChange={() => {
                     handleTransmissionChange("auto");
-                    setOpenAccordionItems(["transmission"]);
                   }}
                 />
-                <label htmlFor="auto" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`auto-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Automatic
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="manual"
+                  id={`manual-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={transmission.includes("manual")}
                   onChange={() => {
                     handleTransmissionChange("manual");
-                    setOpenAccordionItems(["transmission"]);
-                  }}
-                />
-                <label htmlFor="manual" className="text-base mobile-large-text">
-                  Manual
-                </label>
-              </div>
-              {/* <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="semi-auto"
-                  className="mr-3 h-6 w-6 mobile-large-checkbox"
-                  checked={transmission.includes("semi-auto")}
-                  onChange={() => {
-                    handleTransmissionChange("semi-auto");
-                    setOpenAccordionItems(["transmission"]);
                   }}
                 />
                 <label
-                  htmlFor="semi-auto"
+                  htmlFor={`manual-${isMobile ? "mobile" : "desktop"}`}
                   className="text-base mobile-large-text"
                 >
-                  Semi-Automatic
+                  Manual
                 </label>
-              </div> */}
+              </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Fuel Type */}
-        <AccordionItem value="fuel-type">
-          <CustomAccordionTrigger className="">
-            Fuel type
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Fuel Type */}
+          <CustomAccordion
+            title="Fuel type"
+            isOpen={openAccordionItem === "fuel-type"}
+            onToggle={() => toggleAccordion("fuel-type")}
+          >
             <div className="space-y-3 mt-3">
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="petrol"
+                  id={`petrol-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("petrol")}
                   onChange={() => {
                     handleFuelTypeChange("petrol");
-                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="petrol" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`petrol-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Petrol
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="diesel"
+                  id={`diesel-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("diesel")}
                   onChange={() => {
                     handleFuelTypeChange("diesel");
-                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="diesel" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`diesel-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Diesel
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="hybrid"
+                  id={`hybrid-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("hybrid")}
                   onChange={() => {
                     handleFuelTypeChange("hybrid");
-                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="hybrid" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`hybrid-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   Hybrid
                 </label>
               </div>
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="electric"
+                  id={`electric-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("electric")}
                   onChange={() => {
                     handleFuelTypeChange("electric");
-                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
                 <label
-                  htmlFor="electric"
+                  htmlFor={`electric-${isMobile ? "mobile" : "desktop"}`}
                   className="text-base mobile-large-text"
                 >
                   Electric
@@ -977,26 +922,29 @@ export function SearchResults() {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="lpg"
+                  id={`lpg-${isMobile ? "mobile" : "desktop"}`}
                   className="mr-3 h-6 w-6 mobile-large-checkbox"
                   checked={fuelType.includes("lpg")}
                   onChange={() => {
                     handleFuelTypeChange("lpg");
-                    setOpenAccordionItems(["fuel-type"]);
                   }}
                 />
-                <label htmlFor="lpg" className="text-base mobile-large-text">
+                <label
+                  htmlFor={`lpg-${isMobile ? "mobile" : "desktop"}`}
+                  className="text-base mobile-large-text"
+                >
                   LPG
                 </label>
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Engine */}
-        <AccordionItem value="engine">
-          <CustomAccordionTrigger className="">Engine</CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Engine */}
+          <CustomAccordion
+            title="Engine"
+            isOpen={openAccordionItem === "engine"}
+            onToggle={() => toggleAccordion("engine")}
+          >
             <div className="space-y-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
@@ -1006,7 +954,6 @@ export function SearchResults() {
                   value={engineSize}
                   onValueChange={(value) => {
                     setEngineSize(value);
-                    setOpenAccordionItems(["engine"]);
                   }}
                   placeholder="Any size"
                   options={[
@@ -1028,7 +975,6 @@ export function SearchResults() {
                   value={horsepower}
                   onValueChange={(value) => {
                     setHorsepower(value);
-                    setOpenAccordionItems(["engine"]);
                   }}
                   placeholder="Any horsepower"
                   options={[
@@ -1042,15 +988,14 @@ export function SearchResults() {
                 />
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </CustomAccordion>
 
-        {/* Vehicle History */}
-        <AccordionItem value="history">
-          <CustomAccordionTrigger className="">
-            Vehicle History
-          </CustomAccordionTrigger>
-          <AccordionContent>
+          {/* Vehicle History */}
+          <CustomAccordion
+            title="Vehicle History"
+            isOpen={openAccordionItem === "history"}
+            onToggle={() => toggleAccordion("history")}
+          >
             <div className="space-y-4 mt-3">
               <div>
                 <label className="md:text-base text-muted-foreground mb-2 block mobile-large-text">
@@ -1060,7 +1005,6 @@ export function SearchResults() {
                   value={accident}
                   onValueChange={(value) => {
                     setAccident(value);
-                    setOpenAccordionItems(["history"]);
                   }}
                   placeholder="Any"
                   options={[
@@ -1079,7 +1023,6 @@ export function SearchResults() {
                   value={serviceHistory}
                   onValueChange={(value) => {
                     setServiceHistory(value);
-                    setOpenAccordionItems(["history"]);
                   }}
                   placeholder="Any"
                   options={[
@@ -1099,7 +1042,6 @@ export function SearchResults() {
                   value={registered}
                   onValueChange={(value) => {
                     setRegistered(value);
-                    setOpenAccordionItems(["history"]);
                   }}
                   placeholder="Any"
                   options={[
@@ -1110,11 +1052,11 @@ export function SearchResults() {
                 />
               </div>
             </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </div>
-  );
+          </CustomAccordion>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="container mx-auto px-4">
@@ -1181,7 +1123,7 @@ export function SearchResults() {
               { value: "price-high", label: "Price: High to Low" },
               { value: "newest", label: "Newest First" },
             ]}
-            className="w-[130px]"
+            className="w-[90px] md:w-[130px]"
           />
           <div className="flex items-center gap-2">
             <Button
@@ -1237,9 +1179,7 @@ export function SearchResults() {
 
           {/* Scrollable content area */}
           <div className="h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide">
-            <div className="p-6">
-              <FilterContent />
-            </div>
+            <div className="p-6">{createFilterContent(true)}</div>
           </div>
 
           {/* Sticky footer with apply button */}
@@ -1276,7 +1216,7 @@ export function SearchResults() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
-              <FilterContent />
+              {createFilterContent(false)}
             </div>
 
             <div className="sticky bottom-0 z-10 bg-white p-4 border-t mt-auto">
