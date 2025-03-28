@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, LayoutList, ChevronUp, ArrowLeft, X } from "lucide-react";
+import {
+  LayoutGrid,
+  LayoutList,
+  ChevronUp,
+  ArrowLeft,
+  X,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import CarCard from "./car-card";
 import { CARS } from "@/lib/data";
@@ -780,23 +787,6 @@ export function SearchResults() {
                   4x4
                 </label>
               </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`awd-${isMobile ? "mobile" : "desktop"}`}
-                  className="mr-3 h-6 w-6 mobile-large-checkbox"
-                  checked={drivetrain.includes("awd")}
-                  onChange={() => {
-                    handleDrivetrainChange("awd");
-                  }}
-                />
-                <label
-                  htmlFor={`awd-${isMobile ? "mobile" : "desktop"}`}
-                  className="text-base mobile-large-text"
-                >
-                  All-wheel drive
-                </label>
-              </div>
             </div>
           </CustomAccordion>
 
@@ -1100,19 +1090,19 @@ export function SearchResults() {
       </section>
 
       {/* Mobile filters toggle and sort - sticky at the top */}
-      <div className="lg:hidden bg-white sticky top-0 z-10 bg-background py-3 border-b flex justify-between items-center">
+      <div className="lg:hidden  fixed bottom-5 right-5 z-10 bg-background py-3 border-b flex justify-between items-center">
         <Button
           variant="outline"
           onClick={toggleMobileFilters}
-          className="flex items-center gap-2 text-base py-2 px-4"
+          className="flex items-center gap-2 bg-white text-base py-2 px-4"
         >
-          Filters
-          <ChevronUp
+          <SlidersHorizontal />
+          {/* <ChevronUp
             size={16}
             className={mobileFiltersOpen ? "" : "rotate-180"}
-          />
+          /> */}
         </Button>
-        <div className="flex items-center justify-between gap-2">
+        {/* <div className="flex items-center justify-between gap-2">
           <NativeSelect
             value={sortOption}
             onValueChange={setSortOption}
@@ -1143,7 +1133,7 @@ export function SearchResults() {
               <LayoutList size={18} />
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Mobile filters drawer */}
