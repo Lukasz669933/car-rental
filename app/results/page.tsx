@@ -1,5 +1,6 @@
 "use client";
 
+import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { SearchResults } from "../components/search-results";
 
@@ -10,6 +11,7 @@ export default function SearchPage() {
         <Header />
       </div>
       <SearchResults />
+      <Footer />
     </div>
   );
 }

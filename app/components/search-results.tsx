@@ -9,6 +9,11 @@ import {
   ArrowLeft,
   X,
   SlidersHorizontal,
+  ArrowUpDown,
+  ArrowDownUp,
+  ArrowDown,
+  ArrowUp,
+  Clock,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import CarCard from "./car-card";
@@ -113,6 +118,47 @@ const drawerStyles = `
   .drawer-overlay.open {
     opacity: 1;
     visibility: visible;
+  }
+  
+  /* Custom styles for sort icon button */
+  .sort-icon-select {
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+  }
+  
+  .sort-icon-select:focus {
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+    outline: none;
+  }
+  
+  /* Style for dropdown options */
+  option {
+    font-size: 16px;
+    padding: 8px;
+    background-color: white;
+    color: black;
+  }
+  
+  /* Smaller devices adjustments */
+  @media (max-width: 640px) {
+    .mobile-controls {
+      padding: 0.5rem;
+      margin: 0 0.5rem;
+    }
+    
+    .mobile-controls button, 
+    .mobile-controls .sort-icon-select {
+      height: 2.5rem;
+      width: 2.5rem;
+    }
+    
+    /* Ensure dropdown options are large enough on mobile */
+    select option {
+      font-size: 16px;
+      padding: 12px 8px;
+    }
   }
 `;
 
@@ -326,27 +372,29 @@ export function SearchResults() {
     className = "",
   }) => {
     return (
-      <select
-        value={value}
-        onChange={(e) => onValueChange(e.target.value)}
-        disabled={disabled}
-        className={`w-full border rounded-md px-3 py-2 text-base md:py-2 
+      <div className="relative w-full">
+        <select
+          value={value}
+          onChange={(e) => onValueChange(e.target.value)}
+          disabled={disabled}
+          className={`w-full border rounded-md px-3 py-2 text-base md:py-2 appearance-none
            ${className}`}
-        style={{ height: "auto" }}
-      >
-        <option value="" disabled={value !== ""}>
-          {placeholder}
-        </option>
-        {options.map((option) => (
-          <option
-            key={option.value}
-            value={option.value}
-            disabled={option.disabled}
-          >
-            {option.label}
+          style={{ height: "auto" }}
+        >
+          <option value="" disabled={value !== ""}>
+            {placeholder}
           </option>
-        ))}
-      </select>
+          {options.map((option) => (
+            <option
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+            >
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
     );
   };
 
@@ -1056,7 +1104,7 @@ export function SearchResults() {
       `}</style>
       {/* <Header /> */}
       {/* Hero Section */}
-      <section className="relative h-[200px] md:h-[370px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
+      <section className="relative h-[300px] md:h-[370px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/results.jpg"
@@ -1073,67 +1121,53 @@ export function SearchResults() {
             priority
           />
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="absolute z-30 top-4 left-4 items-center gap-1 bg-blue-900/50 border border-blue-400 backdrop-blur-md rounded-md p-2 text-blue-400 hover:text-blue-400 hover:bg-blue-900/20"
-          onClick={() => router.push("/")}
-        >
-          <ArrowLeft size={16} />
-          Back to Home
-        </Button>
+
         <div className="relative z-10 container h-full flex flex-col justify-center items-end py-[90px] md:py-[120px] text-center text-white">
-          <h1 className="text-xl md:text-5xl md:w-[55%] font-bold ">
+          <h1 className="text-xl md:text-5xl md:w-[55%] mt-20 md:mt-0 font-bold ">
             Find your dream car easily with advanced search filters.
           </h1>
         </div>
       </section>
 
       {/* Mobile filters toggle and sort - sticky at the top */}
-      <div className="lg:hidden  fixed bottom-5 right-5 z-10 bg-background py-3 border-b flex justify-between items-center">
+      <div className="lg:hidden sticky top-20 left-5 right-5 z-10 bg-background py-3 flex justify-between items-center">
         <Button
           variant="outline"
           onClick={toggleMobileFilters}
           className="flex items-center gap-2 bg-white text-base py-2 px-4"
         >
-          <SlidersHorizontal />
-          {/* <ChevronUp
-            size={16}
-            className={mobileFiltersOpen ? "" : "rotate-180"}
-          /> */}
+          <SlidersHorizontal size={20} />
+          <span className="md:inline hidden">Filters</span>
         </Button>
-        {/* <div className="flex items-center justify-between gap-2">
-          <NativeSelect
-            value={sortOption}
-            onValueChange={setSortOption}
-            placeholder="Sort by"
-            options={[
-              { value: "relevance", label: "Relevance" },
-              { value: "price-low", label: "Price: Low to High" },
-              { value: "price-high", label: "Price: High to Low" },
-              { value: "newest", label: "Newest First" },
-            ]}
-            className="w-[90px] md:w-[130px]"
-          />
-          <div className="flex items-center gap-2">
-            <Button
-              variant={viewMode === "grid" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setViewMode("grid")}
-              className="h-10 w-10 md:block hidden"
+        <div className="flex items-center justify-between gap-3 mobile-controls">
+          <div className="relative">
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="w-[40px] md:w-[40px] h-[40px] appearance-none bg-white border rounded-md text-transparent sort-icon-select"
+              aria-label="Sort options"
             >
-              <LayoutGrid size={18} />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setViewMode("list")}
-              className="h-10 w-10 md:block hidden"
-            >
-              <LayoutList size={18} />
-            </Button>
+              <option value="relevance" className="text-black">
+                Relevance
+              </option>
+              <option value="price-low" className="text-black">
+                Price: Low to High
+              </option>
+              <option value="price-high" className="text-black">
+                Price: High to Low
+              </option>
+              <option value="newest" className="text-black">
+                Newest First
+              </option>
+            </select>
+            <div className="absolute inset-0 text-black flex items-center justify-center pointer-events-none">
+              {sortOption === "relevance" && <ArrowUpDown size={20} />}
+              {sortOption === "price-low" && <ArrowDown size={20} />}
+              {sortOption === "price-high" && <ArrowUp size={20} />}
+              {sortOption === "newest" && <Clock size={20} />}
+            </div>
           </div>
-        </div> */}
+        </div>
       </div>
 
       {/* Mobile filters drawer */}
@@ -1248,18 +1282,25 @@ export function SearchResults() {
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Sort by:</span>
-                <NativeSelect
-                  value={sortOption}
-                  onValueChange={setSortOption}
-                  placeholder="Sort by"
-                  options={[
-                    { value: "relevance", label: "Relevance" },
-                    { value: "price-low", label: "Price: Low to High" },
-                    { value: "price-high", label: "Price: High to Low" },
-                    { value: "newest", label: "Newest First" },
-                  ]}
-                  className="w-[180px]"
-                />
+                <div className="relative">
+                  <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="w-[180px] appearance-none bg-transparent border rounded-md p-2 pr-8"
+                    aria-label="Sort options"
+                  >
+                    <option value="relevance">Relevance</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                  </select>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                    {sortOption === "relevance" && <ArrowUpDown size={18} />}
+                    {sortOption === "price-low" && <ArrowDown size={18} />}
+                    {sortOption === "price-high" && <ArrowUp size={18} />}
+                    {sortOption === "newest" && <Clock size={18} />}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1339,7 +1380,6 @@ export function SearchResults() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
