@@ -1107,14 +1107,14 @@ export function SearchResults() {
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-0">
       <style jsx global>{`
         ${scrollbarHideStyles}
         ${drawerStyles}
       `}</style>
       {/* <Header /> */}
       {/* Hero Section */}
-      <section className="relative h-[300px] md:h-[370px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
+      <section className="relative h-[300px]  md:h-[400px] w-[98%] mx-auto my-[10px] rounded-2xl overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/results.jpg"
@@ -1140,21 +1140,20 @@ export function SearchResults() {
       </section>
 
       {/* Mobile filters toggle and sort - sticky at the top */}
-      <div className="lg:hidden sticky top-20 left-5 right-5 z-10 bg-background py-3 flex justify-between items-center">
+      <div className="lg:hidden sticky  top-20 left-40 pl-4 right-0 z-10 bg-background py-3 flex justify-between items-center">
         <Button
           variant="outline"
           onClick={toggleMobileFilters}
-          className="flex items-center gap-2 bg-white text-base py-2 px-4"
+          className="flex items-center gap-2 bg-white border-[1.5px] border-blue-600 text-base py-2 px-3"
         >
           <SlidersHorizontal size={20} />
-          <span className="md:inline hidden">Filters</span>
         </Button>
-        <div className="flex items-center justify-between gap-3 mobile-controls">
+        <div className="flex items-center justify-between gap-3  mobile-controls">
           <div className="relative">
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
-              className="w-[40px] md:w-[40px] h-[40px] appearance-none bg-white border rounded-md text-transparent sort-icon-select"
+              className="w-[40px] md:w-[40px] h-[40px] appearance-none bg-blue-200/60 border-[1.5px] border-blue-600 shadow-md rounded-md text-transparent sort-icon-select"
               aria-label="Sort options"
             >
               <option value="relevance" className="text-black">
@@ -1235,7 +1234,7 @@ export function SearchResults() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 py-6">
+      <div className="flex flex-col lg:flex-row gap-8 px-4 py-6">
         {/* Desktop filters sidebar */}
         <div className="hidden lg:block lg:w-72 shrink-0">
           <div className="bg-white rounded-lg shadow-sm border flex flex-col h-[calc(100vh-2rem)] sticky top-4">

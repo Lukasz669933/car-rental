@@ -58,7 +58,7 @@ export default function CarCard({ car, viewMode }: CarCardProps) {
     return (
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
         {/* Always use a horizontal layout for list view, even on mobile */}
-        <div className="flex flex-row h-full">
+        <div className="flex flex-row min-h-[250px] h-full">
           {/* Image container - smaller on all screen sizes for list view */}
           <div className="w-1/3 min-w-[120px] max-w-[330px] relative h-auto">
             {isMounted && <CarImageSwiper images={car.images} carId={car.id} />}
@@ -163,17 +163,17 @@ export default function CarCard({ car, viewMode }: CarCardProps) {
         </div>
 
         <div className="grid grid-cols-2 gap-2 my-4">
-          <div className="flex items-center gap-1 text-sm text-gray-600">
+          <div className="flex items-center gap-1 font-semibold text-sm text-gray-600">
             <span className="font-medium">Year:</span> {car?.year || "N/A"}
           </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
+          <div className="flex items-center gap-1 font-semibold text-sm text-gray-600">
             <span className="font-medium">Fuel:</span> {car?.fuel || "N/A"}
           </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
+          <div className="flex items-center gap-1 font-semibold text-sm text-gray-600">
             <span className="font-medium">Engine:</span>{" "}
             {car?.engineSize || "N/A"}
           </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
+          <div className="flex items-center gap-1 font-semibold text-sm text-gray-600">
             <span className="font-medium">Transmission:</span>{" "}
             {car?.transmission || "N/A"}
           </div>
