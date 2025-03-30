@@ -232,12 +232,7 @@ export function SearchResults() {
 
   const toggleMobileFilters = () => {
     setMobileFiltersOpen(!mobileFiltersOpen);
-    // Toggle body scroll lock
-    if (!mobileFiltersOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    // The useEffect hook will handle toggling body scroll based on state
   };
 
   const handleTransmissionChange = (value: string) => {
@@ -354,6 +349,21 @@ export function SearchResults() {
       });
     }
   }, [desktopScrollPosition, mobileScrollPosition, openAccordionItem]);
+
+  // Add a dedicated effect for managing body scroll based on filter drawer state
+  useEffect(() => {
+    // Apply or remove body scroll lock based on filter drawer state
+    if (mobileFiltersOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    // Clean up function to ensure scroll is re-enabled when component unmounts
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileFiltersOpen]);
 
   useEffect(() => {
     return () => {
@@ -1174,7 +1184,9 @@ export function SearchResults() {
       <div className="lg:hidden">
         <div
           className={`drawer-overlay ${mobileFiltersOpen ? "open" : ""}`}
-          onClick={() => setMobileFiltersOpen(false)}
+          onClick={() => {
+            setMobileFiltersOpen(false);
+          }}
         />
         <div className={`drawer ${mobileFiltersOpen ? "open" : ""}`}>
           <div className="sticky top-0 z-10 bg-white p-6 border-b">
@@ -1193,7 +1205,9 @@ export function SearchResults() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setMobileFiltersOpen(false)}
+                onClick={() => {
+                  setMobileFiltersOpen(false);
+                }}
                 className="h-8 w-8"
               >
                 <X size={20} />
